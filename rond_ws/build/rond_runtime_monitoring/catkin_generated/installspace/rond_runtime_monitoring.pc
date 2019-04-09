@@ -1,8 +1,0 @@
-prefix=/home/jesse/rond_ws/install
-
-Name: rond_runtime_monitoring
-Description: Description of rond_runtime_monitoring
-Version: 0.0.0
-Cflags: 
-Libs: -L/home/jesse/rond_ws/install/lib 
-Requires: 
