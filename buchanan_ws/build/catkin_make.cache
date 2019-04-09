@@ -1,0 +1,2 @@
+ackermann_msgs:beginner_tutorials:buchanan_runtime_monitoring:resistors_runtime_monitoring:vesc/vesc:vesc/vesc_ackermann:vesc/vesc_driver:vesc/vesc_msgs
+-DCATKIN_DEVEL_PREFIX=/home/michaela/f110-2019-c/buchanan_ws/devel -DCMAKE_INSTALL_PREFIX=/home/michaela/f110-2019-c/buchanan_ws/install -G Unix Makefiles
