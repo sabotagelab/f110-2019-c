@@ -1,8 +1,0 @@
-prefix=/home/michaela/f110-2019-c/buchanan_ws/install
-
-Name: vesc_msgs
-Description: Description of vesc_msgs
-Version: 0.0.1
-Cflags: -I/home/michaela/f110-2019-c/buchanan_ws/install/include
-Libs: -L/home/michaela/f110-2019-c/buchanan_ws/install/lib 
-Requires: std_msgs message_runtime

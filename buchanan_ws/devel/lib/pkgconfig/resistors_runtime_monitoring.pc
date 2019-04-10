@@ -1,8 +1,0 @@
-prefix=/home/michaela/f110-2019-c/buchanan_ws/devel
-
-Name: resistors_runtime_monitoring
-Description: Description of resistors_runtime_monitoring
-Version: 0.0.0
-Cflags: -I/home/michaela/f110-2019-c/buchanan_ws/devel/include
-Libs: -L/home/michaela/f110-2019-c/buchanan_ws/devel/lib 
-Requires: 
