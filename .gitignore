@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+
+week2-lidar-ws/build/*
+week2-lidar-ws/devel/*
+
