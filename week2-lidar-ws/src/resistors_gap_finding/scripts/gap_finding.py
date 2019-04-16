@@ -7,6 +7,12 @@ from geometry_msgs.msg import Vector3
 from sensor_msgs.msg import LaserScan
 import numpy as np
 import math
+import tf
+import tf2_ros
+import tf2_geometry_msgs
+
+x = 0
+y = 0
 
 def kmeans(data):
 	whiten(data)
@@ -30,8 +36,9 @@ def polarToCartesian(middleGap):
 	print(x)
 	print("Y: ")
 	print(y)
-	gapCenter = [x, y, 0.0]
-	pub.publish(gapCenter)
+	#callback_pub = rospy.Publisher("callback_gap",geometry_msgs/Vector3)
+	#gapCenter[0] = [x, y, 0.0]
+	#callback_pub.publish(gapCenter)
 
  
 def callback(data):
@@ -48,7 +55,7 @@ def callback(data):
 	print(dataArray)
 	print("END")
 	kmeans(dataArray)
-	time.sleep(10)	
+	time.sleep(1)	
 	#for item in data.ranges:
 		#rospy.loginfo(item)
 	
@@ -62,7 +69,14 @@ def listener():
 	
 	#subscribe to lidar data
 	rospy.Subscriber('scan', LaserScan, callback)	
+	print("END PRODUCT:")
+	#print(gapInfo)
 	
+	v = Vector3()
+	v.x = x
+	v.y = y
+	v.z = 0.0
+	pub.publish(v)	
 	
 	#define cycle rate
 #	rate = rospy.Rate(1) #1GHz currently
