@@ -1,0 +1,8 @@
+prefix=/home/michaela/f110-2019-c/week2-lidar-ws/install
+
+Name: hokuyo_node
+Description: Description of hokuyo_node
+Version: 1.7.8
+Cflags: -I/home/michaela/f110-2019-c/week2-lidar-ws/install/include
+Libs: -L/home/michaela/f110-2019-c/week2-lidar-ws/install/lib -llibhokuyo
+Requires: rosconsole

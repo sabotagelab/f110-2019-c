@@ -1,0 +1,8 @@
+prefix=/home/michaela/f110-2019-c/week2-lidar-ws/install
+
+Name: gap_finding
+Description: Description of gap_finding
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/michaela/f110-2019-c/week2-lidar-ws/install/lib 
+Requires: 
