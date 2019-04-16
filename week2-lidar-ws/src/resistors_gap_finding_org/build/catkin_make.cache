@@ -1,2 +1,0 @@
-
--DCATKIN_DEVEL_PREFIX=/home/michaela/f110-2019-c/week2-lidar-ws/src/resistors_gap_finding/devel -DCMAKE_INSTALL_PREFIX=/home/michaela/f110-2019-c/week2-lidar-ws/src/resistors_gap_finding/install -G Unix Makefiles
