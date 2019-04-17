@@ -6,8 +6,6 @@ from scipy.cluster.vq import vq, kmeans2, whiten
 from geometry_msgs.msg import Vector3
 from sensor_msgs.msg import LaserScan
 import numpy as np
-from numpy import inf
-from numpy import NaN as nan
 import math
 import tf
 import tf2_ros
@@ -17,7 +15,7 @@ x = 0
 y = 0
 
 def kmeans(data):
-	whiten(data, check_finite=False)
+	whiten(data)
 	#random.seed((1000,2000))
 	codes = 3
 	results = kmeans2(data, 3, iter=2, minit='points')
@@ -46,19 +44,14 @@ def polarToCartesian(middleGap):
 def callback(data):
 	# create numpy array from data
 	# format: [ range , intensity ]
-	dataArray = np.empty((512,2), dtype='float')
+	dataArray = np.empty((1081,3), dtype='float')
 	numEntries = len(data.ranges)
-	#numInt = len(data.intensities)
+	numInt = len(data.intensities)
 	print(numEntries)	
-	#print(numInt)
+	print(numInt)
 	for x in range(0, numEntries):
-		#print(x)
-		rangeData = 0
-		if data.ranges[x] == inf or data.ranges[x] == nan:
-			rangeData = 1000
-		else:
-			rangeData = data.ranges[x]
-		tmp = np.array([x, rangeData], dtype='float')
+		print(x)
+		tmp = np.array([x, data.ranges[x], data.intensities[x]], dtype='float')
 		#print(tmp)
 		dataArray[x][:] = tmp
 		#rospy.loginfo(data.ranges[x], data.intensities[x])
