@@ -46,22 +46,26 @@ def polarToCartesian(middleGap):
 def callback(data):
 	# create numpy array from data
 	# format: [ range , intensity ]
-	dataArray = np.empty((512,2), dtype='float')
+	dataArray = np.empty((513,2), dtype='float')
 	numEntries = len(data.ranges)
 	#numInt = len(data.intensities)
 	print(numEntries)	
 	#print(numInt)
-	for x in range(0, numEntries):
-		#print(x)
+	for x in range(0, numEntries - 1):
 		rangeData = 0
-		if data.ranges[x] == inf or data.ranges[x] == nan:
+		if np.isnan(data.ranges[x]) or np.isinf(data.ranges[x]):		#		data.ranges[x] == nan:
 			rangeData = 1000
 		else:
 			rangeData = data.ranges[x]
+
+		if data.ranges[x] <= 1/10000:
+			rangeData = 0
 		tmp = np.array([x, rangeData], dtype='float')
 		#print(tmp)
 		dataArray[x][:] = tmp
 		#rospy.loginfo(data.ranges[x], data.intensities[x])
+#		print(rangeData)
+#		time.sleep(.01)
 	print(dataArray)
 	print("END")
 	kmeans(dataArray)
@@ -76,7 +80,7 @@ def listener():
 
 	#create publisher for topic lidar_gaps
 	pub = rospy.Publisher('lidar_gaps', Vector3, queue_size=100)
-	
+
 	#subscribe to lidar data
 	rospy.Subscriber('scan', LaserScan, callback)	
 	print("END PRODUCT:")
