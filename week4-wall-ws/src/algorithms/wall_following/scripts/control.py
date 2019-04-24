@@ -17,8 +17,18 @@ def control_callback(data):
   # TODO: Based on the error (data.data), determine the car's required velocity
   # amd steering angle.
 
+  	if angle >= 0 && angle <= 10:
+		velocity = 1.5
+
+ 	elif angle > 10 && angle <= 20:
+		velocity = 1.0
+
+  	else:
+		velocity = 0.5
+
 	msg = drive_param()
-	msg.velocity = 0.5  # TODO: implement PID for velocity
+	msg.velocity = velocity  # TODO: implement PID for velocity
+
 	msg.angle = 20.0    # TODO: implement PID for steering angle
 	pub.publish(msg)
 
