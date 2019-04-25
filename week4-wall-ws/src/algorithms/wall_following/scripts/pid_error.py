@@ -117,9 +117,40 @@ def followLeft(dataArray, desired_distance, ang_inc):
 # data: single message from topic /scan
 # Outputs the PID error required to make the car drive in the middle
 # of the hallway.
-def followCenter(data):
-  # TODO: implement
-  return 0.0
+def followCenter(dataArray, ang_inc):
+  # split data for left and right wall
+  dataArray_cut_left = dataArray[:-128,:]
+  dataArray_cut_right = dataArray[128:,:]
+
+  # insert raw angle for each data point
+  for x in range(0, len(dataArray_cut_left)):
+    dataArray_cut_left[x][3] = x*ang_inc
+
+  for x in range(0, len(dataArray_cut_right)):
+    dataArray_cut_right[x][3] = x*ang_inc
+
+  # get a and b beam
+  b_beam_left = dataArray_cut_left[-1,:]
+  b_beam_right = dataArray_cut_right[0,:]
+
+  # (1 step)/(ang_ing) = steps/rad
+  rads_to_steps = round(ANGLE/ang_inc)
+
+  a_beam_right = dataArray_cut_right[rads_to_steps,:]
+
+  a_beam_index = len(dataArray_cut_left) - rads_to_steps
+  a_beam_left = dataArray_cut_left[a_beam_index,:]
+
+  # get distances
+  d_ahead_right = getRange(a_beam_right, b_beam_right)
+  d_ahead_left = getRange(a_beam_left, b_beam_left)
+
+  ideal_center = (d_ahead_left + d_ahead_right) / 2
+  actual_path = d_ahead_right - d_ahead_left
+
+  error = ideal_center - actual_path 
+  print('Error: ' + str(error))
+  return error
 
 # Callback for receiving LIDAR data on the /scan topic.
 # data: the LIDAR data, published as a list of distances to the wall.
