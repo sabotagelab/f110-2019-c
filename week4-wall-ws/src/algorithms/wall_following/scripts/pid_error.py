@@ -8,6 +8,7 @@ import sys
 from sensor_msgs.msg import LaserScan
 from std_msgs.msg import Float64
 import pdb
+from scipy.cluster.vq import vq, kmeans2, whiten
 
 pub = rospy.Publisher('pid_error', Float64, queue_size=10)
 
@@ -17,26 +18,101 @@ MAX_DISTANCE = 30.0
 MIN_ANGLE = -45.0
 MAX_ANGLE = 225.0
 
+DES_DISTANCE = 0.5
+LOOK_AHEAD = 0.2
+ANGLE = .35          # .35 radians = 20 degrees, angle betwen beams a and b
+
+
+# Convert raw data. Eliminate NaN and inf.
+def cleanData(data):
+  print("")
+  print("JUST GOT LIDAR SCAN")
+
+  ang_inc = data.angle_increment
+  print("angle increment: " + str(ang_inc))
+
+  numEntries = len(data.ranges)
+  dataArray = np.zeros((numEntries,4), dtype='float')
+
+  for x in range(0, numEntries - 1):
+    rangeData = 0
+    if np.isnan(data.ranges[x]) or np.isinf(data.ranges[x]):    #   data.ranges[x] == nan:
+      rangeData = 5
+    else:
+      rangeData = data.ranges[x]
+
+    if data.ranges[x] <= 1/1000:
+      rangeData = 0
+    # 45 Degrees = .7854 Radians = 128 Steps. Puts 0 Degrees at 45 Degrees forward of
+    # extreme right beam, per lab instructions
+    tmp = np.array([x, x*ang_inc, rangeData], dtype='float')
+    dataArray[x][:3] = tmp
+
+  return [dataArray, ang_inc]
+
+
 # data: single message from topic /scan
 # angle: between -45 to 225 degrees, where 0 degrees is directly to the right
 # Outputs length in meters to object with angle in lidar scan field of view
-def getRange(data, angle):
+def getRange(a_beam, b_beam):
   # TODO: implement
-  return 0.0
+  print('a_beam' + str(a_beam))
+  print('b_beam' + str(b_beam))
+  a = a_beam[2]
+  b = b_beam[2]
+  theta = a_beam[3]-b_beam[3]
+  num = a*np.cos(theta) - b
+  denom = a*np.sin(theta)
+  alpha = np.arctan(num/denom)
+  d_current = b*np.cos(alpha)
+  d_ahead = d_current + LOOK_AHEAD*np.sin(alpha)
+  print("d_ahead Distance: " + str(d_ahead))
+  return d_ahead
+
 
 # data: single message from topic /scan
 # desired_distance: desired distance to the left wall [meters]
 # Outputs the PID error required to make the car follow the left wall.
-def followLeft(data, desired_distance):
+def followRight(dataArray, desired_distance, ang_inc):
   # TODO: implement
-  return 0.0
+
+  # 45 Degrees = .7854 Radians = 128 Steps
+  dataArray_cut = dataArray[128:,:]
+  size_dataArray_cut = len(dataArray_cut)
+  for x in range(0,size_dataArray_cut):
+    dataArray_cut[x][3] = x*ang_inc
+  b_beam = dataArray_cut[0,:]
+  # (1 step)/(ang_ing) = steps/rad
+  rads_to_steps = round(ANGLE/ang_inc)
+  a_beam = dataArray_cut[rads_to_steps,:]
+
+  d_ahead = getRange(a_beam, b_beam)
+  error = desired_distance - d_ahead
+  print('Error: ' + str(error))
+  return error
+
 
 # data: single message from topic /scan
 # desired_distance: desired distance to the right wall [meters]
 # Outputs the PID error required to make the car follow the right wall.
-def followRight(data, desired_distance):
+def followLeft(dataArray, desired_distance, ang_inc):
   # TODO: implement
-  return 0.0
+
+  # 45 Degrees = .7854 Radians = 128 Steps
+  dataArray_cut = dataArray[:-128,:]
+  size_dataArray_cut = len(dataArray_cut)
+  for x in range(0, size_dataArray_cut):
+    dataArray_cut[x][3] = x*ang_inc
+  b_beam = dataArray_cut[-1,:]
+  # (1 step)/(ang_ing) = steps/rad
+  rads_to_steps = round(ANGLE/ang_inc)
+  a_beam_index = size_dataArray_cut - rads_to_steps
+  a_beam = dataArray_cut[a_beam_index,:]
+
+  d_ahead = getRange(a_beam, b_beam)
+  error = desired_distance - d_ahead
+  print('Error: ' + str(error))
+  return error
 
 # data: single message from topic /scan
 # Outputs the PID error required to make the car drive in the middle
@@ -49,6 +125,11 @@ def followCenter(data):
 # data: the LIDAR data, published as a list of distances to the wall.
 def scan_callback(data):
   error = 0.0 # TODO: replace with followLeft, followRight, or followCenter
+
+  [dataArray, ang_inc] = cleanData(data)
+
+  # error = followRight(dataArray, DES_DISTANCE, ang_inc)
+  error = followLeft(dataArray, DES_DISTANCE, ang_inc)
 
   msg = Float64()
   msg.data = error
