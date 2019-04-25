@@ -136,10 +136,10 @@ def followCenter(dataArray, ang_inc):
   # (1 step)/(ang_ing) = steps/rad
   rads_to_steps = round(ANGLE/ang_inc)
 
-  a_beam_right = dataArray_cut_right[rads_to_steps,:]
+  a_beam_right = dataArray_cut_right[int(rads_to_steps),:]
 
   a_beam_index = len(dataArray_cut_left) - rads_to_steps
-  a_beam_left = dataArray_cut_left[a_beam_index,:]
+  a_beam_left = dataArray_cut_left[int(a_beam_index),:]
 
   # get distances
   d_ahead_right = getRange(a_beam_right, b_beam_right)
@@ -160,7 +160,8 @@ def scan_callback(data):
   [dataArray, ang_inc] = cleanData(data)
 
   # error = followRight(dataArray, DES_DISTANCE, ang_inc)
-  error = followLeft(dataArray, DES_DISTANCE, ang_inc)
+  #error = followLeft(dataArray, DES_DISTANCE, ang_inc)
+  error = followCenter(dataArray, ang_inc)  
 
   msg = Float64()
   msg.data = error
