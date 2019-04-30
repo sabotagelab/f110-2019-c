@@ -16,31 +16,80 @@ import tf2_geometry_msgs
 x = 0
 y = 0
 
-def kmeans(data):
+def dbscan(data):
+	#4 6
+	results = DBSCAN(eps=4, min_samples=8, algorithm='brute').fit(data)
+	labels = results.labels_
+	numClusters = len(set(labels)) - (1 if -1 in labels else 0)
+	print("Num clusters: %d" % numClusters )
+	print(labels)
+	pickGap(results, data)
 
-	#random.seed((1000,2000))
-	codes = 3
-	results = DBSCAN(data, min_samples=3)
-	print("results: " + str(results))
-	#pickGap(results[0])
+def pickGap(results, data):
+	# calculate gap between each cluster
+	clusters = []
 
-def pickGap(results):
-	np.argsort(results, axis=0)
-	middleGap = results[1,:]
-	print("MIDDLE GAP: ")
-	print(middleGap)
-	polarToCartesian(middleGap)	
+	clusterCount = 0
+	first = None
+
+	# find start and end of each cluster
+	labels = results.labels_
+	pointData = [None] * 5
+	average = 0
+	averageCount = 1
+
+	for x in range (0, len(labels) - 1):
+		if (labels[x] != clusterCount and labels[x] != -1):
+			print("LAST: %d" % x)
+			pointData[0] = first
+			pointData[1] = data[first][1]
+			pointData[2] = x - 1
+			pointData[3] = data[x][1]
+			pointData[4] = average / averageCount
+			clusters.append(pointData)
+			clusterCount += 1
+			pointData = [None] * 5
+			first = None
+			average = 0
+			averageCount = 0
+		elif labels[x] == clusterCount and first == None:
+			first = x
+			print("FIRST: %d" % first)
+		
+		average += data[x][1]
+		averageCount += 1
+	print(clusters)
+	gaps = []
+
+	# put only far range clusters in gaps
+	for cluster in clusters:
+		if cluster[4] > 4:
+			gaps.append(cluster)
+
+	# find widest gap
+	max_width = 0
+	max_gap = None
+	for x in range(0, len(gaps)):
+		if (gaps[x][2] - gaps[x][0] > max_width):
+			max_gap = x
+
+	target_gap = gaps[max_gap]
+	print(target_gap)
+	center = (target_gap[2] + target_gap[0]) / 2
+	center_of_gap = [data[center][0], data[center][1]]
+	print(center_of_gap)
+	polarToCartesian(center_of_gap)
 
 def polarToCartesian(middleGap):
+	global x
+	global y 
+
 	x = middleGap[1] * math.cos(0.004363 * middleGap[0])
 	y = middleGap[1] * math.sin(0.004363 * middleGap[0])
 	print("X: ")
 	print(x)
 	print("Y: ")
 	print(y)
-	#callback_pub = rospy.Publisher("callback_gap",geometry_msgs/Vector3)
-	#gapCenter[0] = [x, y, 0.0]
-	#callback_pub.publish(gapCenter)
 
  
 def callback(data):
@@ -54,7 +103,7 @@ def callback(data):
 	for x in range(0, numEntries - 1):
 		rangeData = 0
 		if np.isnan(data.ranges[x]) or np.isinf(data.ranges[x]):		#		data.ranges[x] == nan:
-			rangeData = 1000
+			rangeData = 5
 		else:
 			rangeData = data.ranges[x]
 
@@ -68,7 +117,7 @@ def callback(data):
 #		time.sleep(.01)
 	print(dataArray)
 	print("END")
-	kmeans(dataArray)
+	dbscan(dataArray)
 	time.sleep(1)	
 	#for item in data.ranges:
 		#rospy.loginfo(item)
@@ -90,7 +139,12 @@ def listener():
 	v.x = x
 	v.y = y
 	v.z = 0.0
-	pub.publish(v)	
+
+	while not rospy.is_shutdown():
+		v.x = x
+		v.y = y
+		rospy.sleep(1)	    		
+		pub.publish(v)
 	
 	#define cycle rate
 #	rate = rospy.Rate(1) #1GHz currently

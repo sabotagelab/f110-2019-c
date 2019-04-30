@@ -20,24 +20,28 @@ def kmeans(data):
 	whiten(data, check_finite=False)
 	#random.seed((1000,2000))
 	codes = 3
-	results = kmeans2(data, 3, iter=2, minit='points')
+	results = kmeans2(data, 5, iter=2, minit='points')
 	print(results)
 	pickGap(results[0])
 
 def pickGap(results):
 	np.argsort(results, axis=0)
-	middleGap = results[1,:]
+#	middleGap = results[1,:]
+	middleGap = np.amin(results, axis=0)
 	print("MIDDLE GAP: ")
 	print(middleGap)
 	polarToCartesian(middleGap)	
 
 def polarToCartesian(middleGap):
+	global x
+	global y
+
 	x = middleGap[1] * math.cos(0.004363 * middleGap[0])
 	y = middleGap[1] * math.sin(0.004363 * middleGap[0])
-	print("X: ")
-	print(x)
-	print("Y: ")
-	print(y)
+#	print("X: ")
+#	print(x)
+#	print("Y: ")
+#	print(y)
 	#callback_pub = rospy.Publisher("callback_gap",geometry_msgs/Vector3)
 	#gapCenter[0] = [x, y, 0.0]
 	#callback_pub.publish(gapCenter)
@@ -46,19 +50,19 @@ def polarToCartesian(middleGap):
 def callback(data):
 	# create numpy array from data
 	# format: [ range , intensity ]
-	dataArray = np.empty((513,2), dtype='float')
 	numEntries = len(data.ranges)
+	dataArray = np.empty((numEntries,2), dtype='float')
 	#numInt = len(data.intensities)
-	print(numEntries)	
+#	print(numEntries)	
 	#print(numInt)
 	for x in range(0, numEntries - 1):
 		rangeData = 0
 		if np.isnan(data.ranges[x]) or np.isinf(data.ranges[x]):		#		data.ranges[x] == nan:
-			rangeData = 1000
+			rangeData = 5
 		else:
 			rangeData = data.ranges[x]
 
-		if data.ranges[x] <= 1/10000:
+		if data.ranges[x] <= 1/1000:
 			rangeData = 0
 		tmp = np.array([x, rangeData], dtype='float')
 		#print(tmp)
@@ -66,8 +70,8 @@ def callback(data):
 		#rospy.loginfo(data.ranges[x], data.intensities[x])
 #		print(rangeData)
 #		time.sleep(.01)
-	print(dataArray)
-	print("END")
+#	print(dataArray)
+#	print("END")
 	kmeans(dataArray)
 	time.sleep(1)	
 	#for item in data.ranges:
@@ -75,6 +79,9 @@ def callback(data):
 	
 
 def listener():
+	global x
+	global y
+
 	#initialize node
 	rospy.init_node('find_gap', anonymous=True)	
 
@@ -83,20 +90,23 @@ def listener():
 
 	#subscribe to lidar data
 	rospy.Subscriber('scan', LaserScan, callback)	
-	print("END PRODUCT:")
+#	print("END PRODUCT:")
 	#print(gapInfo)
 	
 	v = Vector3()
 	v.x = x
 	v.y = y
 	v.z = 0.0
-	pub.publish(v)	
 	
 	#define cycle rate
 #	rate = rospy.Rate(1) #1GHz currently
 	#pub.publish(gapCenter)
-		
-	rospy.spin()		
+
+	while not rospy.is_shutdown():
+		v.x = x
+		v.y = y
+		rospy.sleep(1)	    		
+		pub.publish(v)	
 
 if __name__ == '__main__':
 	listener()
