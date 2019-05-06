@@ -17,107 +17,110 @@ MIN_DISTANCE = 0.1
 MAX_DISTANCE = 30.0
 MIN_ANGLE = -45.0
 MAX_ANGLE = 225.0
-
-DES_DISTANCE = 0.5
+DES_DISTANCE = 1.1
 LOOK_AHEAD = 0.2
-ANGLE = .35          # .35 radians = 20 degrees, angle betwen beams a and b
+THETA = .35          # .35 rad = 20 deg: Angle betwen beams a and b
+CENTER_TO_START = 1.48  # 1.571 rad = 90 deg: From car center, starts looking this much to the side
 
 
-# Convert raw data. Eliminate NaN and inf.
+# Convert raw LiDAR data. Eliminate NaN and inf.
+# dataArray stores [Beam Number, Beam Angle, Corrected Range]
 def cleanData(data):
   print("")
   print("JUST GOT LIDAR SCAN")
 
-  ang_inc = data.angle_increment
-  print("angle increment: " + str(ang_inc))
+  # Get Various Information About LiDAR
+  ang_inc = data.angle_increment     # Radians Between 2 Beam
+  numEntries = len(data.ranges)      # Total Number of Beams from LiDAR
+  mid_beam = (numEntries-1)/2        # Beam at Car's Centerline, (numEntries-1) because last entry is a dud
+  print ('ang_inc: ' + str(ang_inc))
+  print ('Num LiDar Readings: ' + str(numEntries))
+  print ('mid_beam: ' + str(mid_beam))
 
-  numEntries = len(data.ranges)
-  dataArray = np.zeros((numEntries,4), dtype='float')
+  # Stores Final Data [Beam Number, Angle, Corrected Range]
+  # Subtract one from numEntries because we throw out the very last beam (is dud beam)
+  dataArray = np.zeros((numEntries-1,3), dtype='float')
 
   for x in range(0, numEntries - 1):
     rangeData = 0
-    if np.isnan(data.ranges[x]) or np.isinf(data.ranges[x]):    #   data.ranges[x] == nan:
-      rangeData = 5
+    if np.isnan(data.ranges[x]) or np.isinf(data.ranges[x]):
+      rangeData = 5     # Sets NaN and Inf to Max Range
     else:
       rangeData = data.ranges[x]
-
     if data.ranges[x] <= 1/1000:
       rangeData = 0
-    # 45 Degrees = .7854 Radians = 128 Steps. Puts 0 Degrees at 45 Degrees forward of
-    # extreme right beam, per lab instructions
     tmp = np.array([x, x*ang_inc, rangeData], dtype='float')
-    dataArray[x][:3] = tmp
+    dataArray[x][:3] = tmp     # Stores [Beam Number, Beam Angle, Corrected Range] into dataArray
+  return [dataArray, ang_inc, mid_beam]
 
-  return [dataArray, ang_inc]
 
-
-# data: single message from topic /scan
-# angle: between -45 to 225 degrees, where 0 degrees is directly to the right
-# Outputs length in meters to object with angle in lidar scan field of view
+# In: Data from the 2 beams you will calculate from
+# Output: Distance [meters] To Wall accounting for Look Ahead Distance
 def getRange(a_beam, b_beam):
-  # TODO: implement
-  print('a_beam' + str(a_beam))
-  print('b_beam' + str(b_beam))
-  a = a_beam[2]
+  a = a_beam[2]                   # Beam Distances
   b = b_beam[2]
-  theta = a_beam[3]-b_beam[3]
+  theta = a_beam[1]-b_beam[1]     # Angle Between Beams
   num = a*np.cos(theta) - b
   denom = a*np.sin(theta)
-  alpha = np.arctan(num/denom)
-  d_current = b*np.cos(alpha)
+  alpha = np.arctan(num/denom)    # Angle of Car
+  d_current = b*np.cos(alpha)     # Current Distance to Wall
   d_ahead = d_current + LOOK_AHEAD*np.sin(alpha)
+
+  print('theta: ' + str(theta))
+  print('alpha: ' + str(alpha))
+  print('alpha in degrees: ' + str(alpha*57.296))
+  print("d_current Distance: " + str(d_current))
   print("d_ahead Distance: " + str(d_ahead))
+
   return d_ahead
 
 
-# data: single message from topic /scan
-# desired_distance: desired distance to the left wall [meters]
-# Outputs the PID error required to make the car follow the left wall.
-def followRight(dataArray, desired_distance, ang_inc):
-  # TODO: implement
+# In: cleaned LiDAR data, radians between each LiDAR beam, and the car's center (forward) beam
+# Out: error to the right wall. This will be used by the PD controller.
+def followRight(dataArray, ang_inc, mid_beam):
+  start_beam = mid_beam - round(CENTER_TO_START/ang_inc)   # Find right beam you want to start from
+  steps_to_THETA = round(THETA/ang_inc)    # (radians)/(radians/step) = Steps to get to THETA
+  end_beam = start_beam + steps_to_THETA   # Find right beam you want to end at
+  a_beam = dataArray[end_beam]             # Pull out end (a) beam data
+  b_beam = dataArray[start_beam]           # Pull out start (b) beam data
+  d_ahead = getRange(a_beam, b_beam)       # Calculate Look Ahead Distance using a/b beams
+  error = d_ahead - DES_DISTANCE           # Calculate error for PD controller
 
-  # 45 Degrees = .7854 Radians = 128 Steps
-  dataArray_cut = dataArray[128:,:]
-  size_dataArray_cut = len(dataArray_cut)
-  for x in range(0,size_dataArray_cut):
-    dataArray_cut[x][3] = x*ang_inc
-  b_beam = dataArray_cut[0,:]
-  # (1 step)/(ang_ing) = steps/rad
-  rads_to_steps = round(ANGLE/ang_inc)
-  a_beam = dataArray_cut[rads_to_steps,:]
-
-  d_ahead = getRange(a_beam, b_beam)
-  error = desired_distance - d_ahead
+  print('dataArray: ' + str(dataArray))
+  print ('start_beam: ' + str(start_beam))
+  print ('end_beam: ' + str(end_beam))
+  print('Right Start Beam (b_beam): ' + str(dataArray[start_beam]))
+  print('THETA Ahead Beam (a_beam)' + str(dataArray[end_beam]))
   print('Error: ' + str(error))
+
   return error
 
 
-# data: single message from topic /scan
-# desired_distance: desired distance to the right wall [meters]
-# Outputs the PID error required to make the car follow the right wall.
-def followLeft(dataArray, desired_distance, ang_inc):
-  # TODO: implement
+# In: cleaned LiDAR data, radians between each LiDAR beam, and the car's center (forward) beam
+# Out: error to the right wall. This will be used by the PD controller.
+def followLeft(dataArray, ang_inc, mid_beam):
+  start_beam = mid_beam + round(CENTER_TO_START/ang_inc)   # Find left beam you want to start from
+  steps_to_THETA = round(THETA/ang_inc)    # (radians)/(radians/step) = Steps to get to THETA
+  end_beam = start_beam - steps_to_THETA   # Find left beam you want to end at
+  a_beam = dataArray[end_beam]             # Pull out end (a) beam data
+  b_beam = dataArray[start_beam]           # Pull out start (b) beam data
+  d_ahead = getRange(a_beam, b_beam)       # Calculate Look Ahead Distance using a/b beams
+  # This error calculation is opposite from followRight. This flips the sign to match with followRight.
+  error = DES_DISTANCE - d_ahead           # Calculate error for PD controller
 
-  # 45 Degrees = .7854 Radians = 128 Steps
-  dataArray_cut = dataArray[:-128,:]
-  size_dataArray_cut = len(dataArray_cut)
-  for x in range(0, size_dataArray_cut):
-    dataArray_cut[x][3] = x*ang_inc
-  b_beam = dataArray_cut[-1,:]
-  # (1 step)/(ang_ing) = steps/rad
-  rads_to_steps = round(ANGLE/ang_inc)
-  a_beam_index = size_dataArray_cut - rads_to_steps
-  a_beam = dataArray_cut[a_beam_index,:]
-
-  d_ahead = getRange(a_beam, b_beam)
-  error = desired_distance - d_ahead
+  print('dataArray: ' + str(dataArray))
+  print ('start_beam: ' + str(start_beam))
+  print ('end_beam: ' + str(end_beam))
+  print('Right Start Beam (b_beam): ' + str(dataArray[start_beam]))
+  print('THETA Ahead Beam (a_beam)' + str(dataArray[end_beam]))
   print('Error: ' + str(error))
+
   return error
 
-# data: single message from topic /scan
-# Outputs the PID error required to make the car drive in the middle
-# of the hallway.
-def followCenter(dataArray, ang_inc):
+
+# In: cleaned LiDAR data, radians between each LiDAR beam, and the car's center (forward) beam
+# Out: error to the hallway's center. This will be used by the PD controller.
+def followCenter(dataArray, ang_inc, mid_beam):
   # split data for left and right wall
   dataArray_cut_left = dataArray[:-128,:]
   dataArray_cut_right = dataArray[128:,:]
@@ -134,7 +137,7 @@ def followCenter(dataArray, ang_inc):
   b_beam_right = dataArray_cut_right[0,:]
 
   # (1 step)/(ang_ing) = steps/rad
-  rads_to_steps = round(ANGLE/ang_inc)
+  rads_to_steps = round(THETA/ang_inc)
 
   a_beam_right = dataArray_cut_right[int(rads_to_steps),:]
 
@@ -152,16 +155,16 @@ def followCenter(dataArray, ang_inc):
   print('Error: ' + str(error))
   return error
 
+
 # Callback for receiving LIDAR data on the /scan topic.
 # data: the LIDAR data, published as a list of distances to the wall.
 def scan_callback(data):
-  error = 0.0 # TODO: replace with followLeft, followRight, or followCenter
+  [dataArray, ang_inc, mid_beam] = cleanData(data)     # Get rid of NaN and Inf
 
-  [dataArray, ang_inc] = cleanData(data)
-
-  # error = followRight(dataArray, DES_DISTANCE, ang_inc)
-  #error = followLeft(dataArray, DES_DISTANCE, ang_inc)
-  error = followCenter(dataArray, ang_inc)  
+  # CHOOSE ONE OF THE THREE WALL FOLLOWING ALGORITHMS:
+  # error = followRight(dataArray, ang_inc, mid_beam)
+  error = followLeft(dataArray, ang_inc, mid_beam)
+  # error = followCenter(dataArray, ang_inc, mid_beam)
 
   msg = Float64()
   msg.data = error

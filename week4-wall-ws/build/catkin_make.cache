@@ -1,0 +1,2 @@
+algorithms/wall_following
+-DCATKIN_DEVEL_PREFIX=/home/jesse/f110-2019-c/week4-wall-ws/devel -DCMAKE_INSTALL_PREFIX=/home/jesse/f110-2019-c/week4-wall-ws/install -G Unix Makefiles
