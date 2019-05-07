@@ -6,5 +6,5 @@ CXX_FLAGS = -fPIC
 
 CXX_DEFINES = -DROS_BUILD_SHARED_LIBS=1 -Dserial_EXPORTS
 
-CXX_INCLUDES = -I/home/michaela/f110-2019-c/week4-wall-ws/src/f110-skeletons-spring2019/system/serial/include 
+CXX_INCLUDES = -I/home/jesse/f110-2019-c/week4-wall-ws/src/f110-skeletons-spring2019/system/serial/include 
 

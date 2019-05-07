@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/michaela/f110-2019-c/week4-wall-ws/src
+CMAKE_SOURCE_DIR = /home/jesse/f110-2019-c/week4-wall-ws/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/michaela/f110-2019-c/week4-wall-ws/build
+CMAKE_BINARY_DIR = /home/jesse/f110-2019-c/week4-wall-ws/build
 
 # Utility rule file for _run_tests_serial.
 
@@ -63,10 +63,10 @@ f110-skeletons-spring2019/system/serial/tests/CMakeFiles/_run_tests_serial.dir/b
 .PHONY : f110-skeletons-spring2019/system/serial/tests/CMakeFiles/_run_tests_serial.dir/build
 
 f110-skeletons-spring2019/system/serial/tests/CMakeFiles/_run_tests_serial.dir/clean:
-	cd /home/michaela/f110-2019-c/week4-wall-ws/build/f110-skeletons-spring2019/system/serial/tests && $(CMAKE_COMMAND) -P CMakeFiles/_run_tests_serial.dir/cmake_clean.cmake
+	cd /home/jesse/f110-2019-c/week4-wall-ws/build/f110-skeletons-spring2019/system/serial/tests && $(CMAKE_COMMAND) -P CMakeFiles/_run_tests_serial.dir/cmake_clean.cmake
 .PHONY : f110-skeletons-spring2019/system/serial/tests/CMakeFiles/_run_tests_serial.dir/clean
 
 f110-skeletons-spring2019/system/serial/tests/CMakeFiles/_run_tests_serial.dir/depend:
-	cd /home/michaela/f110-2019-c/week4-wall-ws/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/michaela/f110-2019-c/week4-wall-ws/src /home/michaela/f110-2019-c/week4-wall-ws/src/f110-skeletons-spring2019/system/serial/tests /home/michaela/f110-2019-c/week4-wall-ws/build /home/michaela/f110-2019-c/week4-wall-ws/build/f110-skeletons-spring2019/system/serial/tests /home/michaela/f110-2019-c/week4-wall-ws/build/f110-skeletons-spring2019/system/serial/tests/CMakeFiles/_run_tests_serial.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/jesse/f110-2019-c/week4-wall-ws/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/jesse/f110-2019-c/week4-wall-ws/src /home/jesse/f110-2019-c/week4-wall-ws/src/f110-skeletons-spring2019/system/serial/tests /home/jesse/f110-2019-c/week4-wall-ws/build /home/jesse/f110-2019-c/week4-wall-ws/build/f110-skeletons-spring2019/system/serial/tests /home/jesse/f110-2019-c/week4-wall-ws/build/f110-skeletons-spring2019/system/serial/tests/CMakeFiles/_run_tests_serial.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : f110-skeletons-spring2019/system/serial/tests/CMakeFiles/_run_tests_serial.dir/depend
 

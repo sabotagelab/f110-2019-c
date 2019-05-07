@@ -10,7 +10,7 @@
 
 # since this file is sourced either use the provided _CATKIN_SETUP_DIR
 # or fall back to the destination set at configure time
-: ${_CATKIN_SETUP_DIR:=/home/michaela/f110-2019-c/week4-wall-ws/devel}
+: ${_CATKIN_SETUP_DIR:=/home/jesse/f110-2019-c/week4-wall-ws/devel}
 _SETUP_UTIL="$_CATKIN_SETUP_DIR/_setup_util.py"
 unset _CATKIN_SETUP_DIR
 

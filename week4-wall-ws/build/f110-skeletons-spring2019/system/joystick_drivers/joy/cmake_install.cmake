@@ -1,8 +1,8 @@
-# Install script for directory: /home/michaela/f110-2019-c/week4-wall-ws/src/f110-skeletons-spring2019/system/joystick_drivers/joy
+# Install script for directory: /home/jesse/f110-2019-c/week4-wall-ws/src/f110-skeletons-spring2019/system/joystick_drivers/joy
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/home/michaela/f110-2019-c/week4-wall-ws/install")
+  set(CMAKE_INSTALL_PREFIX "/home/jesse/f110-2019-c/week4-wall-ws/install")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -33,18 +33,18 @@ if(NOT DEFINED CMAKE_INSTALL_SO_NO_EXE)
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/michaela/f110-2019-c/week4-wall-ws/build/f110-skeletons-spring2019/system/joystick_drivers/joy/catkin_generated/installspace/joy.pc")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/jesse/f110-2019-c/week4-wall-ws/build/f110-skeletons-spring2019/system/joystick_drivers/joy/catkin_generated/installspace/joy.pc")
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/joy/cmake" TYPE FILE FILES
-    "/home/michaela/f110-2019-c/week4-wall-ws/build/f110-skeletons-spring2019/system/joystick_drivers/joy/catkin_generated/installspace/joyConfig.cmake"
-    "/home/michaela/f110-2019-c/week4-wall-ws/build/f110-skeletons-spring2019/system/joystick_drivers/joy/catkin_generated/installspace/joyConfig-version.cmake"
+    "/home/jesse/f110-2019-c/week4-wall-ws/build/f110-skeletons-spring2019/system/joystick_drivers/joy/catkin_generated/installspace/joyConfig.cmake"
+    "/home/jesse/f110-2019-c/week4-wall-ws/build/f110-skeletons-spring2019/system/joystick_drivers/joy/catkin_generated/installspace/joyConfig-version.cmake"
     )
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/joy" TYPE FILE FILES "/home/michaela/f110-2019-c/week4-wall-ws/src/f110-skeletons-spring2019/system/joystick_drivers/joy/package.xml")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/joy" TYPE FILE FILES "/home/jesse/f110-2019-c/week4-wall-ws/src/f110-skeletons-spring2019/system/joystick_drivers/joy/package.xml")
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
@@ -54,7 +54,7 @@ if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspeci
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/joy/joy_node"
          RPATH "")
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/joy" TYPE EXECUTABLE FILES "/home/michaela/f110-2019-c/week4-wall-ws/devel/lib/joy/joy_node")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/joy" TYPE EXECUTABLE FILES "/home/jesse/f110-2019-c/week4-wall-ws/devel/lib/joy/joy_node")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/joy/joy_node" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/joy/joy_node")
     file(RPATH_CHANGE
@@ -68,6 +68,6 @@ if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspeci
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/joy" TYPE DIRECTORY FILES "/home/michaela/f110-2019-c/week4-wall-ws/src/f110-skeletons-spring2019/system/joystick_drivers/joy/migration_rules")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/joy" TYPE DIRECTORY FILES "/home/jesse/f110-2019-c/week4-wall-ws/src/f110-skeletons-spring2019/system/joystick_drivers/joy/migration_rules")
 endif()
 

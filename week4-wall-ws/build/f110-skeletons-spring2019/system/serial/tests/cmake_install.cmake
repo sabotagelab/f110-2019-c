@@ -1,8 +1,8 @@
-# Install script for directory: /home/michaela/f110-2019-c/week4-wall-ws/src/f110-skeletons-spring2019/system/serial/tests
+# Install script for directory: /home/jesse/f110-2019-c/week4-wall-ws/src/f110-skeletons-spring2019/system/serial/tests
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/home/michaela/f110-2019-c/week4-wall-ws/install")
+  set(CMAKE_INSTALL_PREFIX "/home/jesse/f110-2019-c/week4-wall-ws/install")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
