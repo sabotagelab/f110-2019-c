@@ -17,8 +17,8 @@ MIN_DISTANCE = 0.1
 MAX_DISTANCE = 30.0
 MIN_ANGLE = -45.0
 MAX_ANGLE = 225.0
-DES_DISTANCE = 1
-LOOK_AHEAD = 0.2
+DES_DISTANCE = 0.4
+LOOK_AHEAD = 0.05
 THETA = .35          # .35 rad = 20 deg: Angle betwen beams a and b
 CENTER_TO_START = 1.48  # 1.571 rad = 90 deg: From car center, starts looking this much to the side
 
@@ -84,9 +84,11 @@ def followRight(dataArray, ang_inc, mid_beam):
   a_beam = dataArray[end_beam]             # Pull out end (a) beam data
   b_beam = dataArray[start_beam]           # Pull out start (b) beam data
   d_ahead = getRange(a_beam, b_beam)       # Calculate Look Ahead Distance using a/b beams
-  error = d_ahead - DES_DISTANCE           # Calculate error for PD controller
+  error = DES_DISTANCE - d_ahead     # Calculate error for PD controller
 
   print('dataArray: ' + str(dataArray))
+  print('beam 180: ' + str(dataArray[180]))
+  print('beam 900: ' + str(dataArray[900]))
   print ('start_beam: ' + str(start_beam))
   print ('end_beam: ' + str(end_beam))
   print('Right Start Beam (b_beam): ' + str(dataArray[start_beam]))
@@ -106,7 +108,7 @@ def followLeft(dataArray, ang_inc, mid_beam):
   b_beam = dataArray[start_beam]           # Pull out start (b) beam data
   d_ahead = getRange(a_beam, b_beam)       # Calculate Look Ahead Distance using a/b beams
   # This error calculation is opposite from followRight. This flips the sign to match with followRight.
-  error = DES_DISTANCE - d_ahead           # Calculate error for PD controller
+  error = d_ahead - DES_DISTANCE           # Calculate error for PD controller
 
   print('dataArray: ' + str(dataArray))
   print ('start_beam: ' + str(start_beam))
@@ -121,16 +123,38 @@ def followLeft(dataArray, ang_inc, mid_beam):
 # In: cleaned LiDAR data, radians between each LiDAR beam, and the car's center (forward) beam
 # Out: error to the hallway's center. This will be used by the PD controller.
 def followCenter(dataArray, ang_inc, mid_beam):
-  # split data for left and right wall
+  start_beam = int(mid_beam + round(CENTER_TO_START/ang_inc))   # Find left beam you want to start from
+  steps_to_THETA = round(THETA/ang_inc)    # (radians)/(radians/step) = Steps to get to THETA
+  end_beam_left = int(start_beam - steps_to_THETA)   # Find left beam you want to end at
+  end_beam_right = int(start_beam + steps_to_THETA)   # Find right beam you want to end at
+  a_beam_left = dataArray[end_beam_left]             # Pull out end (a) beam data
+  a_beam_right = dataArray[end_beam_right]
+  b_beam = dataArray[start_beam]           # Pull out start (b) beam data
+  d_ahead_left = getRange(a_beam_left, b_beam)       # Calculate Look Ahead Distance using a/b beams
+  d_ahead_right = getRange(a_beam_right, b_beam)
+  # This error calculation is opposite from followRight. This flips the sign to match with followRight.
+  center = (d_ahead_left + d_ahead_right) / 2
+  error = center - (d_ahead_right - d_ahead_left)           # Calculate error for PD controller
+
+  print('dataArray: ' + str(dataArray))
+  print ('start_beam: ' + str(start_beam))
+  print ('end_beam_right: ' + str(end_beam_right))
+  print('Right Start Beam (b_beam): ' + str(dataArray[start_beam]))
+  print('THETA Ahead Beam (a_beam)' + str(dataArray[end_beam_right]))
+  print('Error: ' + str(error))
+
+  return error
+
+  """ # split data for left and right wall
   dataArray_cut_left = dataArray[:-128,:]
   dataArray_cut_right = dataArray[128:,:]
 
   # insert raw angle for each data point
   for x in range(0, len(dataArray_cut_left)):
-    dataArray_cut_left[x][3] = x*ang_inc
+    dataArray_cut_left[x][2] = x*ang_inc
 
   for x in range(0, len(dataArray_cut_right)):
-    dataArray_cut_right[x][3] = x*ang_inc
+    dataArray_cut_right[x][2] = x*ang_inc
 
   # get a and b beam
   b_beam_left = dataArray_cut_left[-1,:]
@@ -149,11 +173,13 @@ def followCenter(dataArray, ang_inc, mid_beam):
   d_ahead_left = getRange(a_beam_left, b_beam_left)
 
   ideal_center = (d_ahead_left + d_ahead_right) / 2
+  print('IDEAL CENTER:' + str(ideal_center))
   actual_path = d_ahead_right - d_ahead_left
+  print('ACTUAL PATH:' + str(actual_path))
 
   error = ideal_center - actual_path 
   print('Error: ' + str(error))
-  return error
+  return error """
 
 
 # Callback for receiving LIDAR data on the /scan topic.
@@ -162,9 +188,9 @@ def scan_callback(data):
   [dataArray, ang_inc, mid_beam] = cleanData(data)     # Get rid of NaN and Inf
 
   # CHOOSE ONE OF THE THREE WALL FOLLOWING ALGORITHMS:
-  # error = followRight(dataArray, ang_inc, mid_beam)
   error = followRight(dataArray, ang_inc, mid_beam)
-  # error = followCenter(dataArray, ang_inc, mid_beam)
+  #error = followLeft(dataArray, ang_inc, mid_beam)
+  #error = followCenter(dataArray, ang_inc, mid_beam)
 
   msg = Float64()
   msg.data = error

@@ -5,8 +5,8 @@ from std_msgs.msg import Float64
 import numpy as np
 
 # TODO: modify PD values to make car follow walls smoothly.
-KP = 0.75
-KD = 2
+KP = 0.3
+KD = 0.5
 rad_10 = np.deg2rad(10)
 rad_20 = np.deg2rad(20)
 # rad_10 = deg2rad(10)
@@ -35,30 +35,32 @@ def control_callback(data):
 
     # PD for Angle
 	angle_KP = (data*KP)
-	angle = angle_KP
-	# angle_KD = (data - DATA_PREVIOUS)*KD   # Time between scans is constant. Thus, don't need to divide by time because constant KD handles it
-	# angle = angle_KP + angle_KD
+	#angle = angle_KP
+	angle_KD = (data - DATA_PREVIOUS)*KD   # Time between scans is constant. Thus, don't need to divide by time because constant KD handles it
+	angle = angle_KP + angle_KD
 
 	if abs(angle) >= rad_20:
 		angle = np.sign(angle)*rad_20
 
     # PD for Speed
-  	if angle >= -rad_10 and angle <= rad_10:
+	if angle >= -rad_10 and angle <= rad_10:
 		velocity = 1.5
- 	elif (angle > rad_10 and angle <= rad_20) or (angle < -rad_10 and angle >= -rad_20):
+	elif (angle > rad_10 and angle <= rad_20) or (angle < -rad_10 and angle >= -rad_20):
 		velocity = 1.0
-  	else:
+	else:
 		velocity = 0.5
 
     # Save and Publish PD Output
 	msg = drive_param()
 	msg.velocity = velocity
+	#msg.velocity = 0
 	msg.angle = angle
+	#msg.angle = 0
 	pub.publish(msg)
 
 	# msg.velocity = 1
 	# msg.angle = .30
-	pub.publish(msg)
+#	pub.publish(msg)
 
 	DATA_PREVIOUS = data   # Save Current Error for Next Time
 
