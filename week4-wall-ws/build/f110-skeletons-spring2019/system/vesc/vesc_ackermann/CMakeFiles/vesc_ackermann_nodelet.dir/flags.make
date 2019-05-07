@@ -6,5 +6,5 @@ CXX_FLAGS = -fPIC
 
 CXX_DEFINES = -DROSCONSOLE_BACKEND_LOG4CXX -DROS_BUILD_SHARED_LIBS=1 -DROS_PACKAGE_NAME=\"vesc_ackermann\" -Dvesc_ackermann_nodelet_EXPORTS
 
-CXX_INCLUDES = -I/home/michaela/f110-2019-c/week4-wall-ws/src/f110-skeletons-spring2019/system/vesc/vesc_ackermann/include -I/home/michaela/f110-2019-c/week4-wall-ws/devel/include -I/opt/ros/kinetic/include -I/opt/ros/kinetic/share/xmlrpcpp/cmake/../../../include/xmlrpcpp 
+CXX_INCLUDES = -I/home/jesse/f110-2019-c/week4-wall-ws/src/f110-skeletons-spring2019/system/vesc/vesc_ackermann/include -I/home/jesse/f110-2019-c/week4-wall-ws/devel/include -I/opt/ros/kinetic/include -I/opt/ros/kinetic/share/xmlrpcpp/cmake/../../../include/xmlrpcpp 
 

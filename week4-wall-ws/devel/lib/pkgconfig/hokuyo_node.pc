@@ -1,8 +1,8 @@
-prefix=/home/michaela/f110-2019-c/week4-wall-ws/devel
+prefix=/home/jesse/f110-2019-c/week4-wall-ws/devel
 
 Name: hokuyo_node
 Description: Description of hokuyo_node
 Version: 1.7.8
-Cflags: -I/home/michaela/f110-2019-c/week4-wall-ws/devel/include -I/home/michaela/f110-2019-c/week4-wall-ws/src/f110-skeletons-spring2019/system/hokuyo_node/include
-Libs: -L/home/michaela/f110-2019-c/week4-wall-ws/devel/lib -llibhokuyo
+Cflags: -I/home/jesse/f110-2019-c/week4-wall-ws/devel/include -I/home/jesse/f110-2019-c/week4-wall-ws/src/f110-skeletons-spring2019/system/hokuyo_node/include
+Libs: -L/home/jesse/f110-2019-c/week4-wall-ws/devel/lib -llibhokuyo
 Requires: rosconsole

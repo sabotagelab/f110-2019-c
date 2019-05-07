@@ -1,8 +1,8 @@
-prefix=/home/michaela/f110-2019-c/week4-wall-ws/install
+prefix=/home/jesse/f110-2019-c/week4-wall-ws/install
 
 Name: vesc_ackermann
 Description: Description of vesc_ackermann
 Version: 0.0.1
-Cflags: -I/home/michaela/f110-2019-c/week4-wall-ws/install/include
-Libs: -L/home/michaela/f110-2019-c/week4-wall-ws/install/lib 
+Cflags: -I/home/jesse/f110-2019-c/week4-wall-ws/install/include
+Libs: -L/home/jesse/f110-2019-c/week4-wall-ws/install/lib 
 Requires: nodelet pluginlib roscpp nav_msgs std_msgs geometry_msgs tf ackermann_msgs vesc_msgs

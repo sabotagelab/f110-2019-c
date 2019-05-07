@@ -1,7 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/ackermann_msgs_generate_messages_cpp"
-  "/home/michaela/f110-2019-c/week4-wall-ws/devel/include/ackermann_msgs/AckermannDriveStamped.h"
-  "/home/michaela/f110-2019-c/week4-wall-ws/devel/include/ackermann_msgs/AckermannDrive.h"
+  "/home/jesse/f110-2019-c/week4-wall-ws/devel/include/ackermann_msgs/AckermannDriveStamped.h"
+  "/home/jesse/f110-2019-c/week4-wall-ws/devel/include/ackermann_msgs/AckermannDrive.h"
 )
 
 # Per-language clean rules from dependency scanning.

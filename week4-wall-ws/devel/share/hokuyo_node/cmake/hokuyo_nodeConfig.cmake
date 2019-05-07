@@ -67,14 +67,14 @@ set(hokuyo_node_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("TRUE" STREQUAL "TRUE")
-  set(hokuyo_node_SOURCE_PREFIX /home/michaela/f110-2019-c/week4-wall-ws/src/f110-skeletons-spring2019/system/hokuyo_node)
-  set(hokuyo_node_DEVEL_PREFIX /home/michaela/f110-2019-c/week4-wall-ws/devel)
+  set(hokuyo_node_SOURCE_PREFIX /home/jesse/f110-2019-c/week4-wall-ws/src/f110-skeletons-spring2019/system/hokuyo_node)
+  set(hokuyo_node_DEVEL_PREFIX /home/jesse/f110-2019-c/week4-wall-ws/devel)
   set(hokuyo_node_INSTALL_PREFIX "")
   set(hokuyo_node_PREFIX ${hokuyo_node_DEVEL_PREFIX})
 else()
   set(hokuyo_node_SOURCE_PREFIX "")
   set(hokuyo_node_DEVEL_PREFIX "")
-  set(hokuyo_node_INSTALL_PREFIX /home/michaela/f110-2019-c/week4-wall-ws/install)
+  set(hokuyo_node_INSTALL_PREFIX /home/jesse/f110-2019-c/week4-wall-ws/install)
   set(hokuyo_node_PREFIX ${hokuyo_node_INSTALL_PREFIX})
 endif()
 
@@ -91,9 +91,9 @@ endif()
 # flag project as catkin-based to distinguish if a find_package()-ed project is a catkin project
 set(hokuyo_node_FOUND_CATKIN_PROJECT TRUE)
 
-if(NOT "/home/michaela/f110-2019-c/week4-wall-ws/devel/include;/home/michaela/f110-2019-c/week4-wall-ws/src/f110-skeletons-spring2019/system/hokuyo_node/include " STREQUAL " ")
+if(NOT "/home/jesse/f110-2019-c/week4-wall-ws/devel/include;/home/jesse/f110-2019-c/week4-wall-ws/src/f110-skeletons-spring2019/system/hokuyo_node/include " STREQUAL " ")
   set(hokuyo_node_INCLUDE_DIRS "")
-  set(_include_dirs "/home/michaela/f110-2019-c/week4-wall-ws/devel/include;/home/michaela/f110-2019-c/week4-wall-ws/src/f110-skeletons-spring2019/system/hokuyo_node/include")
+  set(_include_dirs "/home/jesse/f110-2019-c/week4-wall-ws/devel/include;/home/jesse/f110-2019-c/week4-wall-ws/src/f110-skeletons-spring2019/system/hokuyo_node/include")
   if(NOT "https://github.com/ros-drivers/hokuyo_node/issues " STREQUAL " ")
     set(_report "Check the issue tracker 'https://github.com/ros-drivers/hokuyo_node/issues' and consider creating a ticket if the problem has not been reported yet.")
   elseif(NOT "http://www.ros.org/wiki/hokuyo_node " STREQUAL " ")
@@ -110,7 +110,7 @@ if(NOT "/home/michaela/f110-2019-c/week4-wall-ws/devel/include;/home/michaela/f1
         message(FATAL_ERROR "Project 'hokuyo_node' specifies '${idir}' as an include dir, which is not found.  It does not exist in '${include}'.  ${_report}")
       endif()
     else()
-      message(FATAL_ERROR "Project 'hokuyo_node' specifies '${idir}' as an include dir, which is not found.  It does neither exist as an absolute directory nor in '/home/michaela/f110-2019-c/week4-wall-ws/src/f110-skeletons-spring2019/system/hokuyo_node/${idir}'.  ${_report}")
+      message(FATAL_ERROR "Project 'hokuyo_node' specifies '${idir}' as an include dir, which is not found.  It does neither exist as an absolute directory nor in '/home/jesse/f110-2019-c/week4-wall-ws/src/f110-skeletons-spring2019/system/hokuyo_node/${idir}'.  ${_report}")
     endif()
     _list_append_unique(hokuyo_node_INCLUDE_DIRS ${include})
   endforeach()
@@ -129,7 +129,7 @@ foreach(library ${libraries})
     set(lib_path "")
     set(lib "${library}-NOTFOUND")
     # since the path where the library is found is returned we have to iterate over the paths manually
-    foreach(path /home/michaela/f110-2019-c/week4-wall-ws/devel/lib;/home/michaela/f110-2019-c/week4-wall-ws/devel/lib;/opt/ros/kinetic/lib)
+    foreach(path /home/jesse/f110-2019-c/week4-wall-ws/devel/lib;/home/jesse/f110-2019-c/week4-wall-ws/devel/lib;/opt/ros/kinetic/lib)
       find_library(lib ${library}
         PATHS ${path}
         NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)

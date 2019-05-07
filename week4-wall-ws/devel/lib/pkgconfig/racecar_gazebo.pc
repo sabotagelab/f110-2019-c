@@ -1,8 +1,8 @@
-prefix=/home/michaela/f110-2019-c/week4-wall-ws/devel
+prefix=/home/jesse/f110-2019-c/week4-wall-ws/devel
 
 Name: racecar_gazebo
 Description: Description of racecar_gazebo
 Version: 0.0.0
 Cflags: 
-Libs: -L/home/michaela/f110-2019-c/week4-wall-ws/devel/lib 
+Libs: -L/home/jesse/f110-2019-c/week4-wall-ws/devel/lib 
 Requires: 
