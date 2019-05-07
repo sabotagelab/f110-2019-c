@@ -17,7 +17,7 @@ MIN_DISTANCE = 0.1
 MAX_DISTANCE = 30.0
 MIN_ANGLE = -45.0
 MAX_ANGLE = 225.0
-DES_DISTANCE = 1.1
+DES_DISTANCE = 1
 LOOK_AHEAD = 0.2
 THETA = .35          # .35 rad = 20 deg: Angle betwen beams a and b
 CENTER_TO_START = 1.48  # 1.571 rad = 90 deg: From car center, starts looking this much to the side
@@ -99,9 +99,9 @@ def followRight(dataArray, ang_inc, mid_beam):
 # In: cleaned LiDAR data, radians between each LiDAR beam, and the car's center (forward) beam
 # Out: error to the right wall. This will be used by the PD controller.
 def followLeft(dataArray, ang_inc, mid_beam):
-  start_beam = mid_beam + round(CENTER_TO_START/ang_inc)   # Find left beam you want to start from
+  start_beam = int(mid_beam + round(CENTER_TO_START/ang_inc))   # Find left beam you want to start from
   steps_to_THETA = round(THETA/ang_inc)    # (radians)/(radians/step) = Steps to get to THETA
-  end_beam = start_beam - steps_to_THETA   # Find left beam you want to end at
+  end_beam = int(start_beam - steps_to_THETA)   # Find left beam you want to end at
   a_beam = dataArray[end_beam]             # Pull out end (a) beam data
   b_beam = dataArray[start_beam]           # Pull out start (b) beam data
   d_ahead = getRange(a_beam, b_beam)       # Calculate Look Ahead Distance using a/b beams

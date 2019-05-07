@@ -5,8 +5,12 @@ from std_msgs.msg import Float64
 import numpy as np
 
 # TODO: modify PD values to make car follow walls smoothly.
-KP = 1.0
+KP = 0.5
 KD = 1.0
+rad_10 = np.deg2rad(10)
+rad_20 = np.deg2rad(20)
+# rad_10 = deg2rad(10)
+# rad_20 = deg2rad(20)
 global DATA_PREVIOUS
 DATA_PREVIOUS = 0    # Variable for previous error. Need for KD(de/dt) calculation
 
@@ -17,6 +21,7 @@ pub = rospy.Publisher('drive_parameters', drive_param, queue_size=1)
 def control_callback(data):
 	global DATA_PREVIOUS
   	data = data.data
+
 
 	print('')
 	print("JUST GOT ERROR")
@@ -30,13 +35,17 @@ def control_callback(data):
 
     # PD for Angle
 	angle_KP = (data*KP)
-	angle_KD = (data - DATA_PREVIOUS)*KD   # Time between scans is constant. Thus, don't need to divide by time because constant KD handles it
-	angle = angle_KP + angle_KD
+	angle = angle_KP
+	# angle_KD = (data - DATA_PREVIOUS)*KD   # Time between scans is constant. Thus, don't need to divide by time because constant KD handles it
+	# angle = angle_KP + angle_KD
+
+	if abs(angle) >= rad_20:
+		angle = np.sign(angle)*rad_20
 
     # PD for Speed
-  	if angle >= -10 and angle <= 10:
+  	if angle >= -rad_10 and angle <= rad_10:
 		velocity = 1.5
- 	elif (angle > 10 and angle <= 20) or (angle < -10 and angle >= -20):
+ 	elif (angle > rad_10 and angle <= rad_20) or (angle < -rad_10 and angle >= -rad_20):
 		velocity = 1.0
   	else:
 		velocity = 0.5
@@ -46,10 +55,15 @@ def control_callback(data):
 	msg.velocity = velocity
 	msg.angle = angle
 	pub.publish(msg)
+
+	# msg.velocity = 1
+	# msg.angle = .30
+	pub.publish(msg)
+
 	DATA_PREVIOUS = data   # Save Current Error for Next Time
 
 	print('angle_KP: ' + str(angle_KP))
-	print('angle_KD: ' + str(angle_KD))
+	# print('angle_KD: ' + str(angle_KD))
 	print("PD Angle Output: " + str(msg.angle))
 	print("PD Velocity Output: " + str(msg.velocity))
 
