@@ -78,9 +78,9 @@ def getRange(a_beam, b_beam):
 # In: cleaned LiDAR data, radians between each LiDAR beam, and the car's center (forward) beam
 # Out: error to the right wall. This will be used by the PD controller.
 def followRight(dataArray, ang_inc, mid_beam):
-  start_beam = mid_beam - round(CENTER_TO_START/ang_inc)   # Find right beam you want to start from
+  start_beam = int(mid_beam - round(CENTER_TO_START/ang_inc))   # Find right beam you want to start from
   steps_to_THETA = round(THETA/ang_inc)    # (radians)/(radians/step) = Steps to get to THETA
-  end_beam = start_beam + steps_to_THETA   # Find right beam you want to end at
+  end_beam = int(start_beam + steps_to_THETA)   # Find right beam you want to end at
   a_beam = dataArray[end_beam]             # Pull out end (a) beam data
   b_beam = dataArray[start_beam]           # Pull out start (b) beam data
   d_ahead = getRange(a_beam, b_beam)       # Calculate Look Ahead Distance using a/b beams
@@ -163,7 +163,7 @@ def scan_callback(data):
 
   # CHOOSE ONE OF THE THREE WALL FOLLOWING ALGORITHMS:
   # error = followRight(dataArray, ang_inc, mid_beam)
-  error = followLeft(dataArray, ang_inc, mid_beam)
+  error = followRight(dataArray, ang_inc, mid_beam)
   # error = followCenter(dataArray, ang_inc, mid_beam)
 
   msg = Float64()

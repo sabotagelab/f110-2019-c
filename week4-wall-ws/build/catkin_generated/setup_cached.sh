@@ -7,4 +7,8 @@
 # new environment variables
 
 # modified environment variables
-export PWD="/home/jesse/f110-2019-c/week4-wall-ws/build"
+export LD_LIBRARY_PATH="/opt/ros/kinetic/lib:/opt/ros/kinetic/lib/x86_64-linux-gnu"
+export PKG_CONFIG_PATH="/opt/ros/kinetic/lib/pkgconfig:/opt/ros/kinetic/lib/x86_64-linux-gnu/pkgconfig"
+export PWD="/home/michaela/f110-2019-c/week4-wall-ws/build"
+export PYTHONPATH="/opt/ros/kinetic/lib/python2.7/dist-packages"
+export ROS_PACKAGE_PATH="/home/michaela/f110-2019-c/week4-wall-ws/src:/opt/ros/kinetic/share"

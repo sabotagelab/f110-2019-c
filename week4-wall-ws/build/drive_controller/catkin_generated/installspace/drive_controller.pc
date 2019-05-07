@@ -1,0 +1,8 @@
+prefix=/home/michaela/f110-2019-c/week4-wall-ws/install
+
+Name: drive_controller
+Description: Description of drive_controller
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/michaela/f110-2019-c/week4-wall-ws/install/lib 
+Requires: 

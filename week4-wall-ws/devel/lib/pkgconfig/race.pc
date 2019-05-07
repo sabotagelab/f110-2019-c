@@ -1,0 +1,8 @@
+prefix=/home/michaela/f110-2019-c/week4-wall-ws/devel
+
+Name: race
+Description: Description of race
+Version: 0.0.0
+Cflags: -I/home/michaela/f110-2019-c/week4-wall-ws/devel/include
+Libs: -L/home/michaela/f110-2019-c/week4-wall-ws/devel/lib 
+Requires: roscpp rospy sensor_msgs std_msgs geometry_msgs
