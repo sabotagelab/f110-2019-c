@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import rospy
-from file_instructions.msg import instruction
-import std_msgs 
+import instruction as instruction
+from std_msgs import Bool, String
 
 DIRECTION = None
 VELOCITY = None
@@ -9,7 +9,7 @@ MSG = instruction()
 
 pub = rospy.Publisher('file_instructions', instruction, queue_size=10)
 
-file = open("/home/michaela/f110-2019-c/week4-wall-ws/src/file_instructions/scripts/instructions.csv", 'r+')
+file = open("instructions.csv", "r")
 
 def convertToMessage(fileLine):
 	DIRECTION = fileLine.split(" ")[0]
@@ -29,5 +29,5 @@ if __name__ == '__main__':
 	rospy.init_node('file_instructions_node', anonymous=True)
 	firstLine = file.readline()
 	convertToMessage(firstLine)
-	rospy.Subscriber("turn_finished", bool, instruction_callback)
+	rospy.Subscriber("turn_finished", Bool, instruction_callback)
 	rospy.spin()
