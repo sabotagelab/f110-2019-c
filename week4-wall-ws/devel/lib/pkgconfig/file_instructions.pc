@@ -1,8 +1,0 @@
-prefix=/home/jesse/f110-2019-c/week4-wall-ws/devel
-
-Name: file_instructions
-Description: Description of file_instructions
-Version: 0.0.0
-Cflags: 
-Libs: -L/home/jesse/f110-2019-c/week4-wall-ws/devel/lib 
-Requires: 

@@ -1,8 +1,0 @@
-prefix=/home/jesse/f110-2019-c/week4-wall-ws/install
-
-Name: vesc_msgs
-Description: Description of vesc_msgs
-Version: 0.0.1
-Cflags: -I/home/jesse/f110-2019-c/week4-wall-ws/install/include
-Libs: -L/home/jesse/f110-2019-c/week4-wall-ws/install/lib 
-Requires: std_msgs message_runtime
