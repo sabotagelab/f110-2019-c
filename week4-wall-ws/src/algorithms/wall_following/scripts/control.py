@@ -5,8 +5,8 @@ from std_msgs.msg import Float64
 import numpy as np
 
 # TODO: modify PD values to make car follow walls smoothly.
-KP = 0.3
-KD = 0.5
+KP = 0.0
+KD = 0.0
 rad_10 = np.deg2rad(10)
 rad_20 = np.deg2rad(20)
 # rad_10 = deg2rad(10)
@@ -25,6 +25,7 @@ def control_callback(data):
 
 	print('')
 	print("JUST GOT ERROR")
+	print('20 deg to rad: ' + str(np.deg2rad(20)))
 	print('Current Error: ' + str(data))
 	print('Previous Error: ' + str(DATA_PREVIOUS))
 	print('KP: ' + str(KP))
@@ -54,8 +55,8 @@ def control_callback(data):
 	msg = drive_param()
 	msg.velocity = velocity
 	#msg.velocity = 0
-	msg.angle = angle
-	#msg.angle = 0
+	# msg.angle = angle
+	msg.angle = 0
 	pub.publish(msg)
 
 	# msg.velocity = 1

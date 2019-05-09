@@ -188,9 +188,9 @@ def scan_callback(data):
   [dataArray, ang_inc, mid_beam] = cleanData(data)     # Get rid of NaN and Inf
 
   # CHOOSE ONE OF THE THREE WALL FOLLOWING ALGORITHMS:
-  #error = followRight(dataArray, ang_inc, mid_beam)
-  #error = followLeft(dataArray, ang_inc, mid_beam)
-  error = followCenter(dataArray, ang_inc, mid_beam)
+  # error = followRight(dataArray, ang_inc, mid_beam)
+  error = followLeft(dataArray, ang_inc, mid_beam)
+  # error = followCenter(dataArray, ang_inc, mid_beam)
 
   msg = Float64()
   msg.data = error
