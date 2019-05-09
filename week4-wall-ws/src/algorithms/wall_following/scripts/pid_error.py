@@ -87,8 +87,6 @@ def followRight(dataArray, ang_inc, mid_beam):
   error = DES_DISTANCE - d_ahead     # Calculate error for PD controller
 
   print('dataArray: ' + str(dataArray))
-  print('beam 180: ' + str(dataArray[180]))
-  print('beam 900: ' + str(dataArray[900]))
   print ('start_beam: ' + str(start_beam))
   print ('end_beam: ' + str(end_beam))
   print('Right Start Beam (b_beam): ' + str(dataArray[start_beam]))
@@ -188,9 +186,9 @@ def scan_callback(data):
   [dataArray, ang_inc, mid_beam] = cleanData(data)     # Get rid of NaN and Inf
 
   # CHOOSE ONE OF THE THREE WALL FOLLOWING ALGORITHMS:
-  #error = followRight(dataArray, ang_inc, mid_beam)
+  error = followRight(dataArray, ang_inc, mid_beam)
   #error = followLeft(dataArray, ang_inc, mid_beam)
-  error = followCenter(dataArray, ang_inc, mid_beam)
+  # error = followCenter(dataArray, ang_inc, mid_beam)
 
   msg = Float64()
   msg.data = error
