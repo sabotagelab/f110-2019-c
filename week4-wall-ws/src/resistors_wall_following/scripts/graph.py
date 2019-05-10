@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import rospy
 from matplotlib import pyplot as plt
+import matplotlib.animation as animation
 # from wall_following.msg import drive_param
 from wall_following.msg import error_analysis
 from std_msgs.msg import Float64
@@ -13,56 +14,60 @@ import numpy as np
 # TOTAL = 0
 # MAX = 0
 
-# pub = rospy.Publisher('wall_following_analysis', error_analysis, queue_size=1)
+COUNT = 0
+runningAvg = 0.00
+runningTotal = 0.00
+runningMax = 0.00
+
+# fig = plt.figure()
+# ax1 = fig.add_subplot(1,1,1)
+
+# plt.show()
+
+pub = rospy.Publisher('wall_following_analysis', error_analysis, queue_size=1)
 
 # Callback for receiving error data on the /pid_error topic
 # data: the error from pid_error_node, published as a Float64
 def control_callback(data):
+	global COUNT
+	global runningAvg
+	global runningTotal
+	global runningMax
 
-	plt.plot([5,6,7,8], [7, 3, 8, 3])
+	COUNT += 1
 
-	plt.show()
+	runningTotal += data.data
+	runningAvg = runningTotal / COUNT
 
+	if abs(data.data) > runningMax:
+		runningMax = abs(data.data)
 
-
-
-
-
-	# global COUNT, TOTAL, MAX
- #  	data = data.data
- #  	print('')
- #  	print('START')
-
-	# msg = error_analysis()
-
- #  	COUNT += 1
- #  	TOTAL += abs(data)
- #  	msg.average = TOTAL/COUNT
- #  	msg.max = MAX
-
- #  	print("MAX: " + str(MAX))
- #  	print('data: ' + str(data))
- #  	print('abs data: ' + str(abs(data)))
-
- #  	if abs(data) > MAX:
- #  		print('Updated Max')
- #  		MAX = abs(data)
- #  		msg.max = MAX
-  		
+	print("\n\n\n\n\n\n\n")
+	print(str(runningMax) + "\n" +  str(runningAvg))
+	print("\n\n\n\n\n\n\n")
 
 	
+	Xdata = []
+	Ydata = []
 
+	Xdata.append(COUNT)
+	Ydata.append(data)
 
-	# print('')
-	# print('Got Next Error HEY!')
-	# print('Current Error: ' + str(data))
-	# print('COUNT: ' + str(COUNT))
-	# print("TOTAL: " + str(TOTAL))
-	# print("MAX: " + str(MAX))
-	# print('Published Average: ' + str(msg.average))
-	# print('Published Max: ' + str(msg.max))
+	# ax1.clear()
+	# ax1.plot(Xdata, Ydata)
+	# ani = animation.FuncAnimation(fig, animate, interval=1000)
+	# plt.show()
 
-	# pub.publish(msg)
+	msg = error_analysis()
+
+	msg.average = runningAvg
+	msg.max = runningMax
+
+	pub.publish(msg)
+
+	if COUNT > 100:
+		COUNT = 0
+		runningTotal = 0.00
 
 # Boilerplate code to start this ROS node.
 # DO NOT MODIFY!

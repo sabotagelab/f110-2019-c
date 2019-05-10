@@ -5,8 +5,8 @@ from std_msgs.msg import Float64
 import numpy as np
 
 # TODO: modify PD values to make car follow walls smoothly.
-KP = .3
-KD = .1
+KP = 1.4
+KD = 1.3
 rad_10 = np.deg2rad(10)
 rad_20 = np.deg2rad(20)
 rad_30 = np.deg2rad(30)

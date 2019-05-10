@@ -8,9 +8,11 @@
 
 <!--  </include>-->
 
+  <node pkg='rqt_plot' name='rqt_plot' type='rqt_plot' args='/wall_following_analysis/average /wall_following_analysis/max /pid_error'/>
+
   # output="screen" allows us to see print statements
   <node pkg="resistors_wall_following" name="pid_error_node" type="pid_error.py" output="screen"/> 
   <node pkg="resistors_wall_following" name="control_node" type="control.py" output="screen"/>
-  <node pkg="racecar"  type="teleop.launch" output="screen"/>
+  <node pkg="resistors_wall_following" name="graph_node" type="graph.py" output="screen"/>
 
 </launch>

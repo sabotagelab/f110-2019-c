@@ -17,8 +17,8 @@ MIN_DISTANCE = 0.1
 MAX_DISTANCE = 30.0
 MIN_ANGLE = -45.0
 MAX_ANGLE = 225.0
-DES_DISTANCE = 0.6
-LOOK_AHEAD = 0.05
+DES_DISTANCE = 0.3
+LOOK_AHEAD = 1
 THETA = .35          # .35 rad = 20 deg: Angle betwen beams a and b
 CENTER_TO_START = 1.48  # 1.571 rad = 90 deg: From car center, starts looking this much to the side
 
