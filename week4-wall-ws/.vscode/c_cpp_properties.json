@@ -1,0 +1,21 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "",
+        "limitSymbolsToIncludedHeaders": true
+      },
+      "includePath": [
+        "/home/jose/Auto/week4-wall-ws/devel/include",
+        "/opt/ros/kinetic/include",
+        "/home/jose/Auto/week4-wall-ws/src/f110-skeletons-spring2019/system/racecar/ackermann_cmd_mux/include",
+        "/home/jose/Auto/week4-wall-ws/src/f110-skeletons-spring2019/system/hokuyo_node/include",
+        "/home/jose/Auto/week4-wall-ws/src/f110-skeletons-spring2019/system/serial/include",
+        "/home/jose/Auto/week4-wall-ws/src/f110-skeletons-spring2019/system/vesc/vesc_ackermann/include",
+        "/home/jose/Auto/week4-wall-ws/src/f110-skeletons-spring2019/system/vesc/vesc_driver/include",
+        "/usr/include"
+      ],
+      "name": "Linux"
+    }
+  ]
+}
