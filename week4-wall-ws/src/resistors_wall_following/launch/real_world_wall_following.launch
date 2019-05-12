@@ -3,8 +3,12 @@
 
   <include file="$(find racecar)/launch/teleop.launch"/>
 
-  <node pkg="wall_following" name="pid_error_node" type="pid_error.py" output="screen"/> 
-  <node pkg="wall_following" name="control_node" type="control.py" output="screen"/>
-  <node pkg="wall_following" name="dead_mans_switch" type="dead_mans_switch.py" output="screen"/>
+  <node pkg="resistors_wall_following" name="pid_error_node" type="pid_error.py" /> 
+  <node pkg="resistors_wall_following" name="control_node" type="control.py"/>
+  <node pkg="resistors_wall_following" name="dead_mans_switch" type="dead_mans_switch.py"/>
+
+  <node pkg="resistors_wall_following" name="edgeDet" type="edgeDet.py" output="screen"/>
+  <node pkg="resistsors_wall_following" name="edgeDetViz" type="edgeVisualizer.py" output="screen"/>
+  <node pkg="rviz" name="rviz" type="rviz" output="screen"/>
 
 </launch>
