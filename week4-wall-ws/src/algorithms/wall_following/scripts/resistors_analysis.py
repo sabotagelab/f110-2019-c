@@ -1,12 +1,9 @@
 #!/usr/bin/env python
 import rospy
-# from wall_following.msg import drive_param
 from wall_following.msg import error_analysis
 from std_msgs.msg import Float64
 import numpy as np
 
-# rad_10 = deg2rad(10)
-# rad_20 = deg2rad(20)
 global COUNT, TOTAL, MAX
 COUNT = 0
 TOTAL = 0
@@ -19,38 +16,27 @@ pub = rospy.Publisher('wall_following_analysis', error_analysis, queue_size=1)
 def control_callback(data):
 	global COUNT, TOTAL, MAX
   	data = data.data
+
   	print('')
-  	print('START')
+  	print('RECEIVED: pid_error msg')
 
 	msg = error_analysis()
-
   	COUNT += 1
   	TOTAL += abs(data)
   	msg.average = TOTAL/COUNT
   	msg.max = MAX
 
-  	print("MAX: " + str(MAX))
-  	print('data: ' + str(data))
-  	print('abs data: ' + str(abs(data)))
+  	print("Error's Current MAX: " + str(MAX))
+  	print('Absolute Val. of New Error: ' + str(abs(data)))
 
   	if abs(data) > MAX:
-  		print('Updated Max')
+  		print('We Just Got a New MAX! ')
   		MAX = abs(data)
   		msg.max = MAX
-  		
 
-	
-
-
-	# print('')
-	# print('Got Next Error HEY!')
-	# print('Current Error: ' + str(data))
-	print('COUNT: ' + str(COUNT))
-	print("TOTAL: " + str(TOTAL))
-	print("MAX: " + str(MAX))
-	print('Published Average: ' + str(msg.average))
-	print('Published Max: ' + str(msg.max))
-
+	print("Final MAX: " + str(MAX))
+	print('Published AVE: ' + str(msg.average))
+	print('Published MAX: ' + str(msg.max))
 	pub.publish(msg)
 
 # Boilerplate code to start this ROS node.
