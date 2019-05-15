@@ -78,6 +78,7 @@ def control_callback(data):
 # Boilerplate code to start this ROS node.
 # DO NOT MODIFY!
 if __name__ == '__main__':
+	global configSpd
 
 	rospy.init_node('pid_controller_node', anonymous=True)
 
@@ -86,7 +87,7 @@ if __name__ == '__main__':
 
 	data = rospy.get_param('topic_list')
 
-	configDir, configIns, confSpd = data
+	configDir, configIns, configSpd = data
 
 	#configDir = f.readline()
 	#configIns = f.readline()

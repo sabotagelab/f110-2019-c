@@ -117,6 +117,7 @@ def getRange(a_beam, b_beam, direction):
 # In: cleaned LiDAR data, radians between each LiDAR beam, and the car's center (forward) beam
 # Out: error to the right wall. This will be used by the PD controller.
 def followRight(dataArray, mid_beam):
+  global RIGHT_WALL
   RIGHT_WALL = 1
   start_beam = int(mid_beam - round(CENTER_TO_START/ANG_INC))   # Find right beam you want to start from
   steps_to_THETA = round(THETA/ANG_INC)    # (radians)/(radians/step) = Steps to get to THETA
@@ -147,6 +148,7 @@ def followRight(dataArray, mid_beam):
 # In: cleaned LiDAR data, radians between each LiDAR beam, and the car's center (forward) beam
 # Out: error to the right wall. This will be used by the PD controller.
 def followLeft(dataArray, mid_beam):
+  global LEFT_WALL
   LEFT_WALL = 1
 
   start_beam = int(mid_beam + round(CENTER_TO_START/ANG_INC))   # Find left beam you want to start from
@@ -178,8 +180,7 @@ def followLeft(dataArray, mid_beam):
 # In: cleaned LiDAR data, radians between each LiDAR beam, and the car's center (forward) beam
 # Out: error to the hallway's center. This will be used by the PD controller.
 def followCenter(dataArray, mid_beam):
-  global DES_DISTANCE
-  global ANG_INC
+  global DES_DISTANCE, ANG_INC, RIGHT_WALL, LEFT_WALL
 
   RIGHT_WALL = 1
   LEFT_WALL = 1
@@ -205,6 +206,8 @@ def followCenter(dataArray, mid_beam):
   d_ahead_right = getRange(a_beam_right, b_beam_right, 'Right')
 
   # If We Saw Both Walls
+  print('RIGHT_WALL: ' + str(RIGHT_WALL))
+  print('LEFT_WALL: ' + str(LEFT_WALL))
   if (RIGHT_WALL == 1) and (LEFT_WALL == 1):
     print('SEE BOTH WALLS, GO TO CENTER')
     center = (d_ahead_left + d_ahead_right) / 2
