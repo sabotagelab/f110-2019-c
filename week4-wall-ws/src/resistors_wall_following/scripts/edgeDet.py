@@ -8,12 +8,14 @@ import sys
 from sensor_msgs.msg import LaserScan
 from std_msgs.msg import Float64, Float32
 from geometry_msgs.msg import Vector3
+import turn_ahead.msg
 import pdb
 import itertools
 
 # pub = rospy.Publisher('pid_error', Float64, queue_size=10)
 cenDis = rospy.Publisher('centerDistance', Float64, queue_size=10)
 testMarker = rospy.Publisher('edgeDetected', Vector3, queue_size=10)
+turnAhead = rospy.Publisher('turn_ahead', turn_ahead, queue_size=10)
 
 radarDistance = 4.00
 angleInc = 0.00
@@ -117,15 +119,20 @@ def scan_callback(data):
 	print("Left Count: "  + str(leftBufferCount))
 
 	v = Vector3()
+	msg = turn_ahead()
+	msg.left = False
+	msg.right = False
 	if rightBufferCount > scanBuffer:
-		#print("Gap Detected on Right Side")
+		print("Gap Detected on Right Side")
 		v.y = -distanceRightWall
 		v.x = distanceRightWall * math.tan(angleRight - angleInc * rightBufferCount)
+		msg.right = True
 
 	if leftBufferCount > scanBuffer:
-		#print("Gap Detected on Left Side")
+		print("Gap Detected on Left Side")
 		v.y = distanceLeftWall
 		v.x = distanceLeftWall * math.tan(angleLeft - angleInc * leftBufferCount)
+		msg.left = True
 
 	# Walls lie above and below the x axis, right being negative.
 
@@ -134,6 +141,7 @@ def scan_callback(data):
 	v.z = 0.0
 
 	testMarker.publish(v)
+	turnAhead.publish(msg)
 
 	print("X: " + str(v.x))
 	print("Y: " + str(v.y))
