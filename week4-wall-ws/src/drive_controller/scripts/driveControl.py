@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 import rospy
-import instruction as instruction
-from std_msgs import Bool, String
+from file_instructions.msg import instruction
+from std_msgs.msg import Bool, String
 from sensor_msgs.msg import LaserScan
-from drive_control.msg import side_check
+from drive_controller.msg import side_check
+from resistors_wall_following.msg import drive_param
 
 # 1.571 rad = 90 deg:
 pub_drive = rospy.Publisher('drive_parameters', drive_param, queue_size=10)
-pub_turnstat = rospy.Publisher('turn_finished', bool, queue_size=10)
+pub_turnstat = rospy.Publisher('turn_finished', Bool, queue_size=10)
 
 FOLLOWING_WALL = True
 TURNING_DIRECTION = None
@@ -26,7 +27,7 @@ def during_turn_callback(data):
 	msg = drive_control()
 
 	# wait for turn to be right next to the car
-	while(!data.left and !data.right):
+	while(not data.left and not data.right):
 		msg.velocity = VELOCITY
 		msg.angle = 0
 		pub_drive.Publish(msg)
@@ -64,7 +65,7 @@ def start_turn_callback(data):
 
 	# otherwise continue wall following if not already happening
 	else:
-		if !(FOLLOWING_WALL)
+		if not FOLLOWING_WALL:
 			system('roslaunch wall_following wall_following.py')
 			print("Restarting wall following")
 			FOLLOWING_WALL = True

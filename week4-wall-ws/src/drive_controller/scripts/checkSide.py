@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 import rospy
-from std_msgs import Bool, String
+from std_msgs.msg import Bool, String
 from sensor_msgs.msg import LaserScan
-from drive_control.msg import side_check
+from drive_controller.msg import side_check
 
 pub = rospy.Publisher('check_side', side_check, queue_size=10)
 
@@ -31,13 +31,13 @@ def cleanData(data):
   return [dataArray, ang_inc, mid_beam]
 
 def check_callback(data):
-	#get both side beams (range)
-	data_array = cleanData(data)
+  #get both side beams (range)
+  data_array = cleanData(data)
   msg = side_check()
 
-	start_beam = int(mid_beam + round(CENTER_TO_START/ang_inc))   # Find left beam you want to start from
-	steps_to_THETA = round(THETA/ang_inc)    # (radians)/(radians/step) = Steps to get to THETA
- 	end_beam_left = int(start_beam - steps_to_THETA)   # Find left beam you want to end at
+  start_beam = int(mid_beam + round(CENTER_TO_START/ang_inc))   # Find left beam you want to start from
+  steps_to_THETA = round(THETA/ang_inc)    # (radians)/(radians/step) = Steps to get to THETA
+  end_beam_left = int(start_beam - steps_to_THETA)   # Find left beam you want to end at
   end_beam_right = int(start_beam + steps_to_THETA)   # Find right beam you want to end at
   left_side = dataArray[end_beam_left]             # Pull out end (a) beam data
   right_side = dataArray[end_beam_right]
@@ -50,7 +50,7 @@ def check_callback(data):
     msg.right = True
     print("RIGHT SIDE GAP")
     	
-  else
+  else:
     msg.left = False
     msg.right = False
 
