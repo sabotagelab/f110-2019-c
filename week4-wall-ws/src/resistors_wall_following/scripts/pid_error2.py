@@ -18,7 +18,7 @@ MAX_DISTANCE = 30.0
 MIN_ANGLE = -45.0
 MAX_ANGLE = 225.0
 DES_DISTANCE = 1.19
-LOOK_AHEAD = 2
+LOOK_AHEAD = 1
 THETA = .35          # .35 rad = 20 deg: Angle betwen beams a and b
 MIN_THETA = 0.09     # (.09 rad = 5 deg) Minimum theta required to get a "good" wall distance calculation
 CENTER_TO_START = 1.48  # 1.571 rad = 90 deg: From car center, starts looking this much to the side
@@ -81,7 +81,7 @@ def checkBeam(a_beam, b_beam, direction, dataArray):
       elif direction == 'Left':
         beam_index += 1    # Left side, thus a_beam counts up to b_beam
       else:
-        print('ERROR: Bad Direction Value Passed to checkBeam')   # Catch-All Error
+        print('ERROR: Bad Direction Value Passed to checkBeam (While Loop)')   # Catch-All Error
       a_beam = dataArray[beam_index]    # Provides next a_beam to check
       print(str(a_beam))
     else:
@@ -96,13 +96,15 @@ def checkBeam(a_beam, b_beam, direction, dataArray):
       proceed = False    # Failed to see one of the walls. Set flag that ends the while loop search
   # Quick check to see if b_beam is bad. Fix later to do a search like I did for a_beam
   if (b_beam[2] >= 5) and (direction == 'Right'):
-  	print('CANT SEE RIGHT WALL')
+  	print('BAD B_BEAM ON RIGHT WALL')
   	RIGHT_WALL = 0
   elif (b_beam[2] >= 5) and (direction == 'Left'):
-  	print('CANT SEE LEFT WALL')
+  	print('BAD B_BEAM ON LEFT WALL')
   	LEFT_WALL = 0
+  elif (b_beam[2] < 5):
+        print('GOOD B_BEAM VALUE')  
   else:
-  	print('ERROR: Bad Direction Value Passed to checkBeam')   # Catch-All Error
+  	print('ERROR: Bad Direction Value Passed to checkBeam (Last If Loop)')   # Catch-All Error
 
   return a_beam          # Return updated a_beam that has gone though this check
 
@@ -119,6 +121,8 @@ def getRange(a_beam, b_beam, direction):
   d_ahead = d_current + LOOK_AHEAD*np.sin(alpha)
 
   print(direction + ' Current Distance: ' + str(d_current))
+  print('Alpha (in degrees): ' + str(np.rad2deg(alpha)))
+  print('Added Distance: ' + str(LOOK_AHEAD*np.sin(alpha)))
   print(direction + ' Ahead Distance: ' + str(d_ahead))
 
   return d_ahead
@@ -127,6 +131,7 @@ def getRange(a_beam, b_beam, direction):
 # In: cleaned LiDAR data, radians between each LiDAR beam, and the car's center (forward) beam
 # Out: error to the right wall. This will be used by the PD controller.
 def followRight(dataArray, mid_beam):
+  global RIGHT_WALL
   RIGHT_WALL = 1
   start_beam = int(mid_beam - round(CENTER_TO_START/ANG_INC))   # Find right beam you want to start from
   steps_to_THETA = round(THETA/ANG_INC)    # (radians)/(radians/step) = Steps to get to THETA
@@ -140,6 +145,7 @@ def followRight(dataArray, mid_beam):
   d_ahead = getRange(a_beam, b_beam, 'Right')       # Calculate Look Ahead Distance using a/b beams
 
   # If We Saw the Right Wall
+  print('RIGHT_WALL: ' + str(RIGHT_WALL))
   if (RIGHT_WALL == 1):
     print('SEE RIGHT WALL, GO TO DES_DISTANCE')
     error = DES_DISTANCE - d_ahead     # Calculate error for PD controller    
@@ -157,6 +163,7 @@ def followRight(dataArray, mid_beam):
 # In: cleaned LiDAR data, radians between each LiDAR beam, and the car's center (forward) beam
 # Out: error to the right wall. This will be used by the PD controller.
 def followLeft(dataArray, mid_beam):
+  global LEFT_WALL
   LEFT_WALL = 1
 
   start_beam = int(mid_beam + round(CENTER_TO_START/ANG_INC))   # Find left beam you want to start from
@@ -171,6 +178,7 @@ def followLeft(dataArray, mid_beam):
   d_ahead = getRange(a_beam, b_beam, 'Left')       # Calculate Look Ahead Distance using a/b beams
   
   # If We Saw the Left Wall
+  print('LEFT_WALL: ' + str(LEFT_WALL))
   if (LEFT_WALL == 1):
     print('SEE LEFT WALL, GO TO DES_DISTANCE')
     error = d_ahead - DES_DISTANCE           # Calculate error for PD controller   
@@ -188,8 +196,7 @@ def followLeft(dataArray, mid_beam):
 # In: cleaned LiDAR data, radians between each LiDAR beam, and the car's center (forward) beam
 # Out: error to the hallway's center. This will be used by the PD controller.
 def followCenter(dataArray, mid_beam):
-  global DES_DISTANCE
-  global ANG_INC
+  global DES_DISTANCE, ANG_INC, RIGHT_WALL, LEFT_WALL
 
   RIGHT_WALL = 1
   LEFT_WALL = 1
@@ -215,6 +222,7 @@ def followCenter(dataArray, mid_beam):
   d_ahead_right = getRange(a_beam_right, b_beam_right, 'Right')
 
   # If We Saw Both Walls
+  print('RIGHT_WALL: ' + str(RIGHT_WALL) + '    LEFT_WALL: ' + str(LEFT_WALL))
   if (RIGHT_WALL == 1) and (LEFT_WALL == 1):
     print('SEE BOTH WALLS, GO TO CENTER')
     center = (d_ahead_left + d_ahead_right) / 2
