@@ -94,6 +94,16 @@ def checkBeam(a_beam, b_beam, direction, dataArray):
         print('CANT SEE LEFT WALL')
         LEFT_WALL = 0
       proceed = False    # Failed to see one of the walls. Set flag that ends the while loop search
+  # Quick check to see if b_beam is bad. Fix later to do a search like I did for a_beam
+  if (b_beam[2] >= 5) and (direction == 'Right'):
+  	print('CANT SEE RIGHT WALL')
+  	RIGHT_WALL = 0
+  elif (b_beam[2] >= 5) and (direction == 'Left'):
+  	print('CANT SEE LEFT WALL')
+  	LEFT_WALL = 0
+  else:
+  	print('ERROR: Bad Direction Value Passed to checkBeam')   # Catch-All Error
+
   return a_beam          # Return updated a_beam that has gone though this check
 
 # In: Data from the 2 beams you will calculate from
