@@ -17,10 +17,8 @@ MIN_DISTANCE = 0.1
 MAX_DISTANCE = 30.0
 MIN_ANGLE = -45.0
 MAX_ANGLE = 225.0
-DES_DISTANCE = 0.4
-LOOK_AHEAD = 1
 DES_DISTANCE = 1.19
-LOOK_AHEAD = 0.05
+LOOK_AHEAD = 2
 THETA = .35          # .35 rad = 20 deg: Angle betwen beams a and b
 MIN_THETA = 0.09     # (.09 rad = 5 deg) Minimum theta required to get a "good" wall distance calculation
 CENTER_TO_START = 1.48  # 1.571 rad = 90 deg: From car center, starts looking this much to the side
@@ -28,6 +26,9 @@ ANG_INC = 0   # Value that will store rad/beam_increment for this LiDAR
 RIGHT_WALL = 1   # 1: Can See Right Wall     0: Can't See Right Wall
 LEFT_WALL = 1   # 1: Can See Left Wall     0: Can't See Left Wall
 
+configDir = "Left"
+configSpd = 15
+configIns = False
 
 # Convert raw LiDAR data. Eliminate NaN and inf.
 # dataArray stores [Beam Number, Beam Angle, Corrected Range]
@@ -77,10 +78,8 @@ def checkBeam(a_beam, b_beam, direction, dataArray):
     if (a_beam[0] != b_beam[0]+min_theta_steps) and (a_beam[0] != b_beam[0]-min_theta_steps):
       if direction == 'Right':
         beam_index -= 1    # Right side, thus a_beam counts down to b_beam
-        RIGHT_WALL = 1
       elif direction == 'Left':
         beam_index += 1    # Left side, thus a_beam counts up to b_beam
-        LEFT_WALL = 1
       else:
         print('ERROR: Bad Direction Value Passed to checkBeam')   # Catch-All Error
       a_beam = dataArray[beam_index]    # Provides next a_beam to check
@@ -118,6 +117,8 @@ def getRange(a_beam, b_beam, direction):
 # In: cleaned LiDAR data, radians between each LiDAR beam, and the car's center (forward) beam
 # Out: error to the right wall. This will be used by the PD controller.
 def followRight(dataArray, mid_beam):
+  global RIGHT_WALL
+  RIGHT_WALL = 1
   start_beam = int(mid_beam - round(CENTER_TO_START/ANG_INC))   # Find right beam you want to start from
   steps_to_THETA = round(THETA/ANG_INC)    # (radians)/(radians/step) = Steps to get to THETA
   end_beam = int(start_beam + steps_to_THETA)   # Find right beam you want to end at
@@ -147,6 +148,9 @@ def followRight(dataArray, mid_beam):
 # In: cleaned LiDAR data, radians between each LiDAR beam, and the car's center (forward) beam
 # Out: error to the right wall. This will be used by the PD controller.
 def followLeft(dataArray, mid_beam):
+  global LEFT_WALL
+  LEFT_WALL = 1
+
   start_beam = int(mid_beam + round(CENTER_TO_START/ANG_INC))   # Find left beam you want to start from
   steps_to_THETA = round(THETA/ANG_INC)    # (radians)/(radians/step) = Steps to get to THETA
   end_beam = int(start_beam - steps_to_THETA)   # Find left beam you want to end at
@@ -176,8 +180,10 @@ def followLeft(dataArray, mid_beam):
 # In: cleaned LiDAR data, radians between each LiDAR beam, and the car's center (forward) beam
 # Out: error to the hallway's center. This will be used by the PD controller.
 def followCenter(dataArray, mid_beam):
-  global DES_DISTANCE
+  global DES_DISTANCE, ANG_INC, RIGHT_WALL, LEFT_WALL
 
+  RIGHT_WALL = 1
+  LEFT_WALL = 1
   start_beam_left = int(mid_beam + round(CENTER_TO_START/ANG_INC))   # Find Left Beam Index to start at
   start_beam_right = int(mid_beam - round(CENTER_TO_START/ANG_INC))   # Find Right Beam Index to start at
   steps_to_THETA = round(THETA/ANG_INC)    # (radians)/(radians/step) = Steps to get to THETA
@@ -200,6 +206,8 @@ def followCenter(dataArray, mid_beam):
   d_ahead_right = getRange(a_beam_right, b_beam_right, 'Right')
 
   # If We Saw Both Walls
+  print('RIGHT_WALL: ' + str(RIGHT_WALL))
+  print('LEFT_WALL: ' + str(LEFT_WALL))
   if (RIGHT_WALL == 1) and (LEFT_WALL == 1):
     print('SEE BOTH WALLS, GO TO CENTER')
     center = (d_ahead_left + d_ahead_right) / 2
@@ -242,12 +250,16 @@ def followCenter(dataArray, mid_beam):
 # Callback for receiving LIDAR data on the /scan topic.
 # data: the LIDAR data, published as a list of distances to the wall.
 def scan_callback(data):
+  global configDir
   [dataArray, mid_beam] = cleanData(data)     # Get rid of NaN and Inf
 
   # CHOOSE ONE OF THE THREE WALL FOLLOWING ALGORITHMS:
-  # error = followRight(dataArray, mid_beam)
-  error = followLeft(dataArray, mid_beam)
-  # error = followCenter(dataArray, mid_beam)
+  if configDir == "Right":
+  	error = followRight(dataArray, mid_beam)
+  elif configDir == "Left":
+  	error = followLeft(dataArray, mid_beam)
+  else:
+  	error = followCenter(dataArray, mid_beam)
 
   msg = Float64()
   msg.data = error
@@ -256,6 +268,28 @@ def scan_callback(data):
 # Boilerplate code to start this ROS node.
 # DO NOT MODIFY!
 if __name__ == '__main__':
+
+	data = rospy.get_param('topic_list')
+
+	configDir, configIns, configSpd = data
+
 	rospy.init_node('pid_error_node', anonymous = True)
 	rospy.Subscriber("scan", LaserScan, scan_callback)
 	rospy.spin()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

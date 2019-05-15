@@ -12,11 +12,11 @@
   <include file="$(find racecar)/launch/teleop.launch"/>
 
   # output="screen" allows us to see print statements
-  <node pkg="resistors_wall_following" name="pid_error_node" type="pid_error.py"/> 
+  <node pkg="resistors_wall_following" name="pid_error_node" type="pid_error2.py"/> 
   <node pkg="resistors_wall_following" name="control_node" type="control.py"/>
   <!-- <node pkg="resistors_wall_following" name="graph_node" type="graph.py" output="screen"/> -->
   <node pkg="resistors_wall_following" name="edgeDet_node" type="edgeDet.py" output="screen"/>
   <node pkg="resistors_wall_following" name="edgeViz_node" type="edgeVisualizer.py" output="screen"/>
-  <!-- <node pkg="rviz" name="rviz" type="rviz" output="screen"/> -->
+  <node pkg="rviz" name="rviz" type="rviz" output="screen"/> 
 
 </launch>

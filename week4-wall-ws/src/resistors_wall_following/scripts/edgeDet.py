@@ -18,7 +18,7 @@ testMarker = rospy.Publisher('edgeDetected', Vector3, queue_size=10)
 radarDistance = 4.00
 angleInc = 0.00
 
-scanBuffer = 4
+scanBuffer = 20
 
 oldrangeAvgLeft = 0.00
 oldrangeAvgRight = 0.00
@@ -32,6 +32,8 @@ def scan_callback(data):
 
 	distanceRightWall = 0.00
 	distanceLeftWall = 0.00
+
+	print("\n\n\n")
 
 	numEntries = len(data.ranges)
 	dataArray = np.zeros((numEntries,1), dtype='float')
@@ -69,45 +71,59 @@ def scan_callback(data):
 
 	# print("Middle: " + str(middleIndice))
 
-	angleRight = math.acos(np.float64(distanceRightWall) / np.float64(radarDistance))
-	angleLeft = math.acos(np.float64(distanceLeftWall) / np.float64(radarDistance))
+	if distanceRightWall < 5:
+		angleRight = math.acos(np.float64(distanceRightWall) / np.float64(radarDistance))
+	else:
+		angleRight = 0
+	if distanceLeftWall < 5:
+		angleLeft = math.acos(np.float64(distanceLeftWall) / np.float64(radarDistance))
+	else:
+		angleLeft = 0
 
 	angleRightMid = math.pi/2 - angleRight
-	angleLeftMid = angleLeft - math.pi/2
+	angleLeftMid = math.pi/2 - angleLeft
 
-	# print("Right Angle: " + str(angleRightMid))
-	# print("Left Angle: " + str(angleLeftMid))	
+	#print("Right Angle: " + str(angleRightMid))
+	#print("Left Angle: " + str(angleLeftMid))	
 
 	angleLeftInd = middleIndice + math.floor(angleLeftMid/angleInc)
 	angleRightInd = middleIndice - math.floor(angleRightMid/angleInc)
 
 	leftBufferCount = 0
-	left
 	rightBufferCount = 0
 
 	# print("Right Ind: " + str(angleRightInd))
 	# print("Left Ind: " + str(angleLeftInd))
 
-	i = 0
-	for i in itertools.islice(dataArray, angleRightInd - 2*scanBuffer, angleRightInd):
-		# print("Right Indice: " +str(i))
-		if i > 5:
-			rightBufferCount += 1
+	if angleRight != 0:
+		i = 0
+		for i in itertools.islice(dataArray, angleRightInd - 2*scanBuffer, angleRightInd):
+		 	#print("Right Indice: " +str(i))
+			if i > 5:
+				rightBufferCount += 1
+	else:
+		print("Right Wall Not detected!")
 
-	i = 0
-	for i in itertools.islice(dataArray, angleLeftInd, angleLeftInd + 2*scanBuffer):
-		# print("Left Indice: " + str(i))
-		if i > 5:
-			leftBufferCount += 1
+	if angleLeft != 0:
+		i = 0
+		for i in itertools.islice(dataArray, angleLeftInd, angleLeftInd + 2*scanBuffer):
+			#print("Left Indice: " + str(i))
+			if i > 5:
+				leftBufferCount += 1
+	else:
+		print("Left Wall Not detected!")
+
+	print("Right count: " + str(rightBufferCount))
+	print("Left Count: "  + str(leftBufferCount))
 
 	v = Vector3()
 	if rightBufferCount > scanBuffer:
-		print("Gap Detected on Right Side")
+		#print("Gap Detected on Right Side")
 		v.y = -distanceRightWall
 		v.x = distanceRightWall * math.tan(angleRight - angleInc * rightBufferCount)
 
 	if leftBufferCount > scanBuffer:
-		print("Gap Detected on Right Side")
+		#print("Gap Detected on Left Side")
 		v.y = distanceLeftWall
 		v.x = distanceLeftWall * math.tan(angleLeft - angleInc * leftBufferCount)
 
