@@ -17,11 +17,14 @@ MIN_DISTANCE = 0.1
 MAX_DISTANCE = 30.0
 MIN_ANGLE = -45.0
 MAX_ANGLE = 225.0
-DES_DISTANCE = 0.3
-LOOK_AHEAD = 1
+DES_DISTANCE = 1
+LOOK_AHEAD = 2
 THETA = .35          # .35 rad = 20 deg: Angle betwen beams a and b
 CENTER_TO_START = 1.48  # 1.571 rad = 90 deg: From car center, starts looking this much to the side
 
+configDir = "Left"
+configSpd = 15
+configIns = False
 
 # Convert raw LiDAR data. Eliminate NaN and inf.
 # dataArray stores [Beam Number, Beam Angle, Corrected Range]
@@ -41,7 +44,7 @@ def cleanData(data):
   # Subtract one from numEntries because we throw out the very last beam (is dud beam)
   dataArray = np.zeros((numEntries-1,3), dtype='float')
 
-  for x in range(0, numEntries - 1):
+  for x in range(0, (numEntries - 1)):
     rangeData = 0
     if np.isnan(data.ranges[x]) or np.isinf(data.ranges[x]):
       rangeData = 5     # Sets NaN and Inf to Max Range
@@ -183,12 +186,17 @@ def followCenter(dataArray, ang_inc, mid_beam):
 # Callback for receiving LIDAR data on the /scan topic.
 # data: the LIDAR data, published as a list of distances to the wall.
 def scan_callback(data):
+  global configDir
   [dataArray, ang_inc, mid_beam] = cleanData(data)     # Get rid of NaN and Inf
 
   # CHOOSE ONE OF THE THREE WALL FOLLOWING ALGORITHMS:
-  error = followRight(dataArray, ang_inc, mid_beam)
-  # error = followLeft(dataArray, ang_inc, mid_beam)
-  # error = followCenter(dataArray, ang_inc, mid_beam)
+
+  if configDir == "Right":
+  	error = followRight(dataArray, ang_inc, mid_beam)
+  elif configDir == "Left":
+  	error = followLeft(dataArray, ang_inc, mid_beam)
+  else:
+  	error = followCenter(dataArray, ang_inc, mid_beam)
 
   msg = Float64()
   msg.data = error
@@ -197,6 +205,38 @@ def scan_callback(data):
 # Boilerplate code to start this ROS node.
 # DO NOT MODIFY!
 if __name__ == '__main__':
-	rospy.init_node('pid_error_node', anonymous = True)
+
+	data = rospy.get_param('topic_list')
+
+	configDir, configIns, configSpd = data
+
+	rospy.init_node('pid_error_node', anonymous = True) 
 	rospy.Subscriber("scan", LaserScan, scan_callback)
 	rospy.spin()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
