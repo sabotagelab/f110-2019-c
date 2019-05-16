@@ -9,7 +9,7 @@
   <node pkg="resistors_wall_following" name="control_node" type="control.py" output="screen" />
   <node pkg="resistors_wall_following" name="dead_mans_switch" type="dead_mans_switch.py"/>
 
-  <node pkg="resistors_wall_following" name="edgeDet" type="edgeDet.py"/>
+  <node pkg="resistors_wall_following" name="edgeDet" type="edgeDet.py" output="screen"/>
   <node pkg="resistors_wall_following" name="edgeDetViz" type="edgeVisualizer.py" output="screen"/>
   <node pkg="drive_controller" name="drive_control_node" type="driveControl.py" />
   <node pkg="drive_controller" name="check_side_node" type="checkSide.py" output="screen"/>

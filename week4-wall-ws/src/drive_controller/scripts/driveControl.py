@@ -15,7 +15,7 @@ pub_turnstat = rospy.Publisher('turn_finished', String, queue_size=10)
 global FOLLOWING_WALL, TURNING_DIRECTION, VELOCITY
 FOLLOWING_WALL = False
 TURNING_DIRECTION = None
-VELOCITY = 1
+VELOCITY = 0
 
 def get_direction_callback(data):
 	global TURNING_DIRECTION, VELOCITY
