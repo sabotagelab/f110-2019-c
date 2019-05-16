@@ -9,7 +9,7 @@ DIRECTION = "straight"
 VELOCITY = 0
 
 pub = rospy.Publisher('file_instructions', instruction, queue_size=10)
-file = open("/home/michaela/f110-2019-c/week4-wall-ws/src/file_instructions/scripts/instructions.csv", 'r+')
+file = open("/home/nvidia/f110-2019-c/week4-wall-ws/src/file_instructions/scripts/instructions.csv", 'r+')
 
 def instruction_callback(data):
 	global DIRECTION, VELOCITY

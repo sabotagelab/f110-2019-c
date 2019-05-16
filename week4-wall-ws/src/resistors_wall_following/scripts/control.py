@@ -63,10 +63,12 @@ def control_callback(data):
 
     # Save and Publish PD Output
 	msg = drive_param()
-	msg.velocity = 0.5
+	msg.velocity = -velocity
 	# msg.velocity = 0
 	msg.angle = angle
 	# msg.angle = .3
+	print("VELOCTITY MSG: " + str(msg.velocity)) 
+	print("ANGLE MSG:  " + str(msg.angle))
 	pub.publish(msg)
 
 	# msg.velocity = 1
