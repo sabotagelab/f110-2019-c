@@ -22,7 +22,7 @@ turnAhead = rospy.Publisher('turn_ahead', turn_ahead, queue_size=10)
 radarDistance = 4.00
 angleInc = 0.00
 
-scanBuffer = 20
+scanBuffer = 15
 
 oldrangeAvgLeft = 0.00
 oldrangeAvgRight = 0.00
@@ -32,7 +32,7 @@ gapPercentError= 0.15
 global repeatRight, repeatLeft, repeatability, VELOCITY
 repeatRight = 0
 repeatLeft = 0
-repeatability = 10
+repeatability = 5
 VELOCITY = 0
 
 def vel_callback(data):
@@ -49,6 +49,7 @@ def scan_callback(data):
 	distanceLeftWall = 0.00
 
 	print("\n\n\n")
+	print("-------------------------Edge Det--------------------------")
 
 	numEntries = len(data.ranges)
 	dataArray = np.zeros((numEntries,1), dtype='float')
@@ -128,11 +129,12 @@ def scan_callback(data):
 	else:
 		print("Left Wall Not detected!")
 
-	print("Right count: " + str(rightBufferCount))
-	print("Left Count: "  + str(leftBufferCount))
+	print("Right Buffer Count: " + str(rightBufferCount))
+	print("Left Buffer Count: "  + str(leftBufferCount))
 
-	latestLeft = Vector3
-	latestRight = Vector3
+	latestLeft = Vector3()
+	latestRight = Vector3()
+	v = Vector3()
 
 	# Check if the number of empties clears the detector, if so tick up the repeater.
 	if rightBufferCount > scanBuffer:
@@ -157,13 +159,10 @@ def scan_callback(data):
 
 	# Walls lie above and below the x axis, right being negative.
 
-	# v.y = -distanceLeftWall
-	# v.x = distanceLeftWall * math.tan(angleLeft)
 	msg = turn_ahead()
 	msg.left = False
 	msg.right = False
 
-	v = Vector3
 	v.x = 0.0
 	v.y = 0.0
 	v.z = 0.0
@@ -186,9 +185,13 @@ def scan_callback(data):
 	if VELOCITY != 0:
 		turnAhead.publish(msg)
 
+	print("Repeat Left: " + str(repeatLeft))
+	print("Repeat Right: " + str(repeatRight))
+	print("Repeatability: " + str(repeatability))
 	print("X: " + str(v.x))
 	print("Y: " + str(v.y))
-
+	print("-------------------------Edge Det--------------------------")
+	print("\n\n\n")
 
 # Boilerplate code to start this ROS node.
 # DO NOT MODIFY!

@@ -5,15 +5,15 @@
 
   <rosparam command="load" file="$(find resistors_wall_following)/wall_config.yaml" />
 
-  <node pkg="resistors_wall_following" name="pid_error2_node" type="pid_error2.py" output="screen" /> 
-  <node pkg="resistors_wall_following" name="control_node" type="control.py" output="screen" />
+  <node pkg="resistors_wall_following" name="pid_error2_node" type="pid_error2.py"/> 
+  <node pkg="resistors_wall_following" name="control_node" type="control.py"/>
   <node pkg="resistors_wall_following" name="dead_mans_switch" type="dead_mans_switch.py"/>
 
   <node pkg="resistors_wall_following" name="edgeDet" type="edgeDet.py" output="screen"/>
-  <node pkg="resistors_wall_following" name="edgeDetViz" type="edgeVisualizer.py" output="screen"/>
-  <node pkg="drive_controller" name="drive_control_node" type="driveControl.py" />
-  <node pkg="drive_controller" name="check_side_node" type="checkSide.py" output="screen"/>
- <node pkg="file_instructions" name="file_instructions_node" type="readFile.py" output="screen" />
-<!-- <node pkg="rviz" name="rviz" type="rviz" output="screen"/> -->
+  <node pkg="resistors_wall_following" name="edgeDetViz" type="edgeVisualizer.py"/>
+  <node pkg="drive_controller" name="drive_control_node" type="driveControl.py" output="screen"/>
+  <node pkg="drive_controller" name="check_side_node" type="checkSide.py"/>
+  <node pkg="file_instructions" name="file_instructions_node" type="readFile.py"/>
+  <node pkg="rviz" name="rviz" type="rviz" output="screen"/>
 
 </launch>

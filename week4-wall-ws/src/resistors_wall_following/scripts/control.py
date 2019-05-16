@@ -30,6 +30,9 @@ def control_callback(data):
 	global configSpd
   	data = data.data
 
+	paramData = rospy.get_param('topic_list')
+
+	_,_, configSpd = paramData
 
 	#print('')
 	#print("JUST GOT ERROR")
@@ -63,7 +66,7 @@ def control_callback(data):
 
     # Save and Publish PD Output
 	msg = drive_param()
-	msg.velocity = -velocity
+	msg.velocity = velocity
 	# msg.velocity = 0
 	msg.angle = angle
 	# msg.angle = .3

@@ -268,12 +268,19 @@ def scan_callback(data):
   global configDir
   [dataArray, mid_beam] = cleanData(data)     # Get rid of NaN and Inf
 
+  data = rospy.get_param('topic_list')
+
+  configDir,_,_ = data
+
   # CHOOSE ONE OF THE THREE WALL FOLLOWING ALGORITHMS:
-  if configDir == "Right":
+  if configDir == "Right" or configDir == "right":
+	print("Right Chosen")
   	error = followRight(dataArray, mid_beam)
-  elif configDir == "Left":
+  elif configDir == "Left" or configDir == "left":
+	print("Left Chosen")
   	error = followLeft(dataArray, mid_beam)
   else:
+	print("Center Default")
   	error = followCenter(dataArray, mid_beam)
 
   msg = Float64()

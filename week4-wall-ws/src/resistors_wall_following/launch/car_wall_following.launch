@@ -13,10 +13,10 @@
 <rosparam command="load" file="$(find resistors_wall_following)/wall_config.yaml" />
   # output="screen" allows us to see print statements
   <node pkg="resistors_wall_following" name="pid_error_node" type="pid_error2.py" output="screen"/> 
-  <node pkg="resistors_wall_following" name="control_node" type="control.py" output="screen"/>
-   <node pkg="resistors_wall_following" name="graph_node" type="graph.py" output="screen"/> 
+  <node pkg="resistors_wall_following" name="control_node" type="control.py" />
+   <node pkg="resistors_wall_following" name="graph_node" type="graph.py" /> 
 <node pkg="resistors_wall_following" name="dead_mans_switch" type="dead_mans_switch.py"/>
-
+<node pkg="resistors_wall_following" name="resistors_analysis_node" type="resistors_analysis.py" />
   <node pkg="rviz" name="rviz" type="rviz" output="screen"/> 
 
 </launch>
