@@ -191,12 +191,18 @@ def scan_callback(data):
 
   # CHOOSE ONE OF THE THREE WALL FOLLOWING ALGORITHMS:
 
+  #error = followRight(dataArray, ang_inc, mid_beam)
+  # error = followLeft(dataArray, ang_inc, mid_beam)
+  error = followCenter(dataArray, ang_inc, mid_beam)
+
+
   if configDir == "Right":
   	error = followRight(dataArray, ang_inc, mid_beam)
   elif configDir == "Left":
   	error = followLeft(dataArray, ang_inc, mid_beam)
   else:
   	error = followCenter(dataArray, ang_inc, mid_beam)
+
 
   msg = Float64()
   msg.data = error

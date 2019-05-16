@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 import rospy
-from std_msgs import Bool, String
+import numpy as np
+from std_msgs.msg import Bool, String
 from sensor_msgs.msg import LaserScan
-from drive_control.msg import side_check
+from drive_controller.msg import side_check
 
+CENTER_TO_START = 1.48
+THETA = .35 
 pub = rospy.Publisher('check_side', side_check, queue_size=10)
 
 # Convert raw LiDAR data. Eliminate NaN and inf.
@@ -31,26 +34,40 @@ def cleanData(data):
   return [dataArray, ang_inc, mid_beam]
 
 def check_callback(data):
-	#get both side beams (range)
-	data_array = cleanData(data)
+  #get both side beams (range)
+  [dataArray, ang_inc, mid_beam] = cleanData(data)
   msg = side_check()
+  # ang_inc = data.angle_increment
+  # numEntries = len(data.ranges)
+  # mid_beam = (numEntries-1)/2 
+  start_beam_right = int(mid_beam - round(CENTER_TO_START/ang_inc))   # Find left beam you want to start from
+  start_beam_left = int(mid_beam + round(CENTER_TO_START/ang_inc)) 
+  steps_to_THETA = round(THETA/ang_inc)    # (radians)/(radians/step) = Steps to get to THETA
+  # end_beam_left = int(start_beam - steps_to_THETA)   # Find left beam you want to end at
+  # end_beam_right = int(start_beam + steps_to_THETA)   # Find right beam you want to end at
+  left_side = dataArray[start_beam_left]             # Pull out end (a) beam data
+  right_side = dataArray[start_beam_right]
 
-	start_beam = int(mid_beam + round(CENTER_TO_START/ang_inc))   # Find left beam you want to start from
-	steps_to_THETA = round(THETA/ang_inc)    # (radians)/(radians/step) = Steps to get to THETA
- 	end_beam_left = int(start_beam - steps_to_THETA)   # Find left beam you want to end at
-  end_beam_right = int(start_beam + steps_to_THETA)   # Find right beam you want to end at
-  left_side = dataArray[end_beam_left]             # Pull out end (a) beam data
-  right_side = dataArray[end_beam_right]
+  print('TESTING LEFT SIDE :::::::::::::::: ' + str(left_side))
 
-  if (left_side[2] == 5):
+  print('TESTING RIGHT SIDE :::::::::::::::: ' + str(right_side))
+
+  if left_side[2] > 2 and right_side[2] < 2:
     msg.left = True
+    msg.right = False
     print("LEFT SIDE GAP")
   
-  elif (right_side[2] == 5):
+  if right_side[2] > 2 and left_side[2] < 2:
     msg.right = True
+    msg.left = False
     print("RIGHT SIDE GAP")
+
+  if left_side[2] > 2 and right_side[2] > 2:
+    msg.left = True
+    msg.right = True
+    print("LEFT AND RIGHT SIDE GAP")
     	
-  else
+  else:
     msg.left = False
     msg.right = False
 

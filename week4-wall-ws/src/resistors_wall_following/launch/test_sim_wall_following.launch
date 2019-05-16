@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<launch>
+  <include file="$(find racecar_gazebo)/launch/racecar.launch">
+	 <arg name="world_name" value="track_levine"/>  # Sharp Corners  
+<!--	<arg name="world_name" value="track_porto"/>  # Smooth Curves-->
+	<!-- <arg name="world_name" value="tube"/>  # Smooth Curves -->
+<!--	 <arg name="world_name" value="track_barca"/>  # Smooth/Many Curves-->
+	<!-- <arg name="world_name" value="track_empty"/>  # No Walls -->
+
+  </include>
+
+   <rosparam command="load" file="$(find resistors_wall_following)/wall_config.yaml" />
+
+  # output="screen" allows us to see print statements
+  <node pkg="resistors_wall_following" name="pid_error_node" type="pid_error2.py" output="screen"/> 
+  <node pkg="resistors_wall_following" name="control_node" type="control.py" output="screen"/>
+  <node pkg="resistors_wall_following" name="sim_connector_node" type="sim_connector.py" output="screen"/>
+  <node pkg="drive_controller" name="drive_control_node" type="driveControl.py" output="screen" /> 
+  <node pkg="drive_controller" name="check_side_node" type="checkSide.py" output="screen"/>
+  <node pkg="resistors_wall_following" name="edge_det_node" type="edgeDet.py" output="screen"/> 
+  <node pkg="file_instructions" name="file_instructions_node" type="readFile.py" output="screen" />
+</launch>
