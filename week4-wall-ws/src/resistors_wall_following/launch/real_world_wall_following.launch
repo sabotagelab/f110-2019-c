@@ -10,6 +10,7 @@
   <node pkg="resistors_wall_following" name="dead_mans_switch" type="dead_mans_switch.py"/>
 
   <node pkg="resistors_wall_following" name="edgeDet" type="edgeDet.py"/>
+  <node pkg="resistors_wall_following" name="resistors_analysis" type="resistors_analysis.py"/>
   <node pkg="resistsors_wall_following" name="edgeDetViz" type="edgeVisualizer.py" output="screen"/>
  <!-- <node pkg="rviz" name="rviz" type="rviz" output="screen"/> -->
 
