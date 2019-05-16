@@ -8,7 +8,7 @@ import sys
 from sensor_msgs.msg import LaserScan
 from std_msgs.msg import Float64, Float32
 from geometry_msgs.msg import Vector3
-import turn_ahead.msg
+from resistors_wall_following.msg import turn_ahead
 import pdb
 import itertools
 

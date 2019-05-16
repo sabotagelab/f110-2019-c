@@ -193,7 +193,7 @@ def scan_callback(data):
 
   #error = followRight(dataArray, ang_inc, mid_beam)
   # error = followLeft(dataArray, ang_inc, mid_beam)
-   error = followCenter(dataArray, ang_inc, mid_beam)
+  error = followCenter(dataArray, ang_inc, mid_beam)
 
 
   if configDir == "Right":
