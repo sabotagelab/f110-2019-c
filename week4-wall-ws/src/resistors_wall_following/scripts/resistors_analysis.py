@@ -20,7 +20,7 @@ pub_max = rospy.Publisher('analysis_max', Marker, queue_size="1")
 def make_marker(marker):
 	marker.header.frame_id = "/laser"
 	marker.pose.position.x = 1
-	marker.pose.position.y = 1
+	# marker.pose.position.y = 1
 	marker.pose.position.z = 0 # or set this to 0
 	marker.type = marker.TEXT_VIEW_FACING
 	marker.scale.x = .2 # If marker is too small in Rviz can make it bigger here
@@ -62,14 +62,14 @@ def control_callback(data):
 
   	marker_ave = Marker()
   	marker_ave.text = 'Average Error: ' + str(np.round(msg.average, decimals = 3))
-  	marker_ave.pose.position.x = 1
+  	marker_ave.pose.position.y = 1
   	marker_ave = make_marker(marker_ave)
   	pub_ave.publish(marker_ave)
   		
   	marker_max = Marker()
   	marker_max.text = 'Max Error: ' + str(np.round(msg.max, decimals = 3))
-  	marker_max.pose.position.x = 2
-  	marker_max = make_marker(marker_ave)
+  	marker_max.pose.position.y = 2
+  	marker_max = make_marker(marker_max)
   	pub_max.publish(marker_max)
 	
 
