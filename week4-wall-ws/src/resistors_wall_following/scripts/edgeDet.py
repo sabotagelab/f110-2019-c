@@ -22,7 +22,8 @@ turnAhead = rospy.Publisher('turn_ahead', turn_ahead, queue_size=10)
 radarDistance = 4.00
 angleInc = 0.00
 
-scanBuffer = 15
+scanBufferRange = 40
+scanBuffer = 0.75*scanBufferRange
 
 oldrangeAvgLeft = 0.00
 oldrangeAvgRight = 0.00
@@ -32,7 +33,7 @@ gapPercentError= 0.15
 global repeatRight, repeatLeft, repeatability, VELOCITY
 repeatRight = 0
 repeatLeft = 0
-repeatability = 5
+repeatability = 3
 VELOCITY = 0
 
 def vel_callback(data):
@@ -48,9 +49,15 @@ def scan_callback(data):
 	distanceRightWall = 0.00
 	distanceLeftWall = 0.00
 
+	# Get angle increement. Find the number of indeces per 90 deg.
+	angleInc = data.angle_increment
+	middleIndice = int(len(data.ranges)/2)
+	indices90 = int((np.pi/2)/angleInc)
+
 	print("\n\n\n")
 	print("-------------------------Edge Det--------------------------")
 
+	# Loop through data set, clearing out inf, nan, and zeroes.
 	numEntries = len(data.ranges)
 	dataArray = np.zeros((numEntries,1), dtype='float')
 	for x in range(0, numEntries - 1):
@@ -64,44 +71,59 @@ def scan_callback(data):
 
 		dataArray[x] = rangeData
 
-	i = len(dataArray) - 1
+
+	# Start at left side, checking for left wall.
+	i = middleIndice + indices90
+	# print("MID: " + str(middleIndice) + " 90: " + str(indices90))
+	# print("ANGLE INC: " + str(angleInc))
+	# print("Str: " + str(i))
 	while True:
+		# If we find a value, save it for left distance.
 		if dataArray[i] > 0:
 			distanceLeftWall = dataArray[i]
 			break
+		# Else, if we go past 5% of the ind, wall skips.
+		if i - indices90 < len(dataArray) * 0.95:
+			break
 		i -= 1
 	
-	i = 0
+
+	# Start at right side, checking for right wall.
+	i = middleIndice - indices90
 	while True:
+		# If we find a value, save it for right distance.
 		if dataArray[i] > 0:
 			distanceRightWall = dataArray[i]
+			break
+		# Else, if we go past 5%, wall is skipped.
+		if i + indices90 > len(dataArray) * 0.5:
 			break
 		i += 1
 
 	print("Distance Left: " + str(distanceLeftWall))
 	print("Distance Right: " + str(distanceRightWall))
 
-	angleInc = data.angle_increment
-
-	middleIndice = len(data.ranges)/2
-
 	# print("Middle: " + str(middleIndice))
 
+	# Calculate right angle, based on distance to wall. If it exists.
 	if distanceRightWall < 5:
 		angleRight = math.acos(np.float64(distanceRightWall) / np.float64(radarDistance))
 	else:
 		angleRight = 0
+	# Calculate left angle, based on distance to wall. If it exists.
 	if distanceLeftWall < 5:
 		angleLeft = math.acos(np.float64(distanceLeftWall) / np.float64(radarDistance))
 	else:
 		angleLeft = 0
 
+	# Find those angles based off of the middle indices.
 	angleRightMid = math.pi/2 - angleRight
 	angleLeftMid = math.pi/2 - angleLeft
 
 	#print("Right Angle: " + str(angleRightMid))
 	#print("Left Angle: " + str(angleLeftMid))	
 
+	# Find the indices that represent those angles.
 	angleLeftInd = middleIndice + math.floor(angleLeftMid/angleInc)
 	angleRightInd = middleIndice - math.floor(angleRightMid/angleInc)
 
@@ -111,18 +133,22 @@ def scan_callback(data):
 	# print("Right Ind: " + str(angleRightInd))
 	# print("Left Ind: " + str(angleLeftInd))
 
+	# If the angle exists, we loop through them.
+	# Based on the buffer range, save any on the right side that are gone.
 	if angleRight != 0:
 		i = 0
-		for i in itertools.islice(dataArray, angleRightInd - 2*scanBuffer, angleRightInd):
+		for i in itertools.islice(dataArray, angleRightInd - scanBufferRange, angleRightInd):
 		 	#print("Right Indice: " +str(i))
 			if i > 5:
 				rightBufferCount += 1
 	else:
 		print("Right Wall Not detected!")
 
+	# IF the left angle exists, we loop through them.
+	# Based on the buffer range, save any on the left side that are gone. 
 	if angleLeft != 0:
 		i = 0
-		for i in itertools.islice(dataArray, angleLeftInd, angleLeftInd + 2*scanBuffer):
+		for i in itertools.islice(dataArray, angleLeftInd, angleLeftInd + scanBufferRange):
 			#print("Left Indice: " + str(i))
 			if i > 5:
 				leftBufferCount += 1
@@ -143,10 +169,12 @@ def scan_callback(data):
 		latestRight.x = distanceRightWall * math.tan(angleRight - angleInc * rightBufferCount)
 		latestRight.z = 0.0
 		repeatRight += 1
-	
+
+	# If there was a false positive detected, clear the repeater.	
 	if rightBufferCount <= scanBuffer:
 		repeatRight = 0
 
+	# Check if the buffer count passes the count, tick up the counter.
 	if leftBufferCount > scanBuffer:
 		print("Gap Detected on Left Side")
 		latestLeft.y = distanceLeftWall
@@ -154,6 +182,7 @@ def scan_callback(data):
 		latestLeft.z = 0.0
 		repeatLeft += 1
 
+	# If there was a false positive detected, clear the repeater.
 	if leftBufferCount <= scanBuffer:
 		repeatLeft = 0
 
@@ -167,21 +196,25 @@ def scan_callback(data):
 	v.y = 0.0
 	v.z = 0.0
 
+	# If there is a certain amount of repeats, gap is confirmed.
 	if repeatLeft > repeatability:
 		msg.left = True
+		print("--------------------------------THERE IS A TURN ON THE LEFT SIDE COMING UP!!--------------------------------------")
 		testMarkerL.publish(latestLeft)
 		repeatLeft = 0
 	else:
 		testMarkerL.publish(v)
 
+	# If there is a certain amount of repeats, gap is confirmed.
 	if repeatRight > repeatability:
 		msg.right = True
+		print("--------------------------------THERE IS A TURN ON THE RIGHT SIDE COMING UP!!-------------------------------------")
 		testMarkerR.publish(latestRight)
 		repeatRight = 0
 	else:
 		testMarkerR.publish(v)
 	
-	print("VELOCITY IN EDGE DET ()()())()()()(): " + str(VELOCITY))	
+	# print("VELOCITY IN EDGE DET ()()())()()()(): " + str(VELOCITY))	
 	if VELOCITY != 0:
 		turnAhead.publish(msg)
 
