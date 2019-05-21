@@ -93,11 +93,7 @@ typedef enum {
 	FAULT_CODE_ENCODER_SPI,
 	FAULT_CODE_ENCODER_SINCOS_BELOW_MIN_AMPLITUDE,
 	FAULT_CODE_ENCODER_SINCOS_ABOVE_MAX_AMPLITUDE,
-	FAULT_CODE_FLASH_CORRUPTION,
-	FAULT_CODE_HIGH_OFFSET_CURRENT_SENSOR_1,
-	FAULT_CODE_HIGH_OFFSET_CURRENT_SENSOR_2,
-	FAULT_CODE_HIGH_OFFSET_CURRENT_SENSOR_3,
-	FAULT_CODE_UNBALANCED_CURRENTS
+	FAULT_CODE_FLASH_CORRUPTION
 } mc_fault_code;
 
 typedef enum {
@@ -671,8 +667,8 @@ typedef struct {
 	bool rev_has_state;
 	bool is_rev;
 } chuck_data;
-
-/*typedef struct {
+/*
+typedef struct {
 	int id;
 	systime_t rx_time;
 	float rpm;
@@ -701,8 +697,8 @@ typedef struct {
 	float temp_motor;
 	float current_in;
 	float pid_pos_now;
-} can_status_msg_4;*/
-
+} can_status_msg_4;
+*/
 typedef struct {
 	uint8_t js_x;
 	uint8_t js_y;

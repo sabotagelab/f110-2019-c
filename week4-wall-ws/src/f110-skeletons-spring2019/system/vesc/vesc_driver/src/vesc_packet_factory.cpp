@@ -33,7 +33,7 @@ VescPacketPtr createFailed(int* p_num_bytes_needed, std::string* p_what,
                            const std::string& what, int num_bytes_needed = 0)
 {
   if (p_num_bytes_needed != NULL) *p_num_bytes_needed = num_bytes_needed;
-//  if (p_what != NULL) *p_what = what;
+  if (p_what != NULL) *p_what = what;
   return VescPacketPtr();
 }
 
@@ -87,7 +87,7 @@ VescPacketPtr VescPacketFactory::createPacket(const Buffer::const_iterator& begi
 
   // is the end-of-frame character valid?
   if (VescFrame::VESC_EOF_VAL != *iter_eof)
-    return createFailed(num_bytes_needed, what, "");
+    return createFailed(num_bytes_needed, what, "Invalid end-of-frame character");
 
   // is the crc valid?
   unsigned short crc = (static_cast<unsigned short>(*iter_crc) << 8) + *(iter_crc + 1);
@@ -110,7 +110,7 @@ VescPacketPtr VescPacketFactory::createPacket(const Buffer::const_iterator& begi
     }
     else {
       // no subclass constructor for this packet
-      return createFailed(num_bytes_needed, what, "");
+      return createFailed(num_bytes_needed, what, "Unkown payload type.");
     }
 
   }

@@ -16,6 +16,8 @@ throttle_smoother_rate: 75.0 # messages/sec
 steering_angle_to_servo_gain: -1.2135
 steering_angle_to_servo_offset: 0.5304
 
+#0.5304
+
 # publish odom to base link tf
 vesc_to_odom/publish_tf: false
 
@@ -30,8 +32,8 @@ vesc_driver:
   current_max: 100.0
   brake_min: -20000.0
   brake_max: 200000.0
-  speed_min: -23250
-  speed_max: 23250
+  speed_min: -2325
+  speed_max: 2325
   position_min: 0.0
   position_max: 0.0
   servo_min: 0.15

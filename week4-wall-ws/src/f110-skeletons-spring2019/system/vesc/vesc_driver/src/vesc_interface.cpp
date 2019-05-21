@@ -66,10 +66,10 @@ void* VescInterface::Impl::rxThread(void)
           if (packet) {
             // good packet, check if we skipped any data
             if (std::distance(iter_begin, iter) > 0) {
-              //std::ostringstream ss;
-              //ss << "Out-of-sync with VESC, unknown data leading valid frame. Discarding "
-               //  << std::distance(iter_begin, iter) << " bytes.";
-//              error_handler_(ss.str());
+              std::ostringstream ss;
+              ss << "Out-of-sync with VESC, unknown data leading valid frame. Discarding "
+                 << std::distance(iter_begin, iter) << " bytes.";
+              error_handler_(ss.str());
             }
             // call packet handler
             packet_handler_(packet);
@@ -83,10 +83,10 @@ void* VescInterface::Impl::rxThread(void)
             // need more data, break out of while loop
             break; // for (iter_sof...
           }
-        //  else {
+          else {
             // else, this was not a packet, move on to next byte
-          //  error_handler_(error);
-          //}
+            error_handler_(error);
+          }
         }
 
         iter++;
@@ -98,9 +98,9 @@ void* VescInterface::Impl::rxThread(void)
 
       // erase "used" buffer
       if (std::distance(iter_begin, iter) > 0) {
-        //std::ostringstream ss;
-        //ss << "Out-of-sync with VESC, discarding " << std::distance(iter_begin, iter) << " bytes.";
-  //      error_handler_(ss.str());
+        std::ostringstream ss;
+        ss << "Out-of-sync with VESC, discarding " << std::distance(iter_begin, iter) << " bytes.";
+        error_handler_(ss.str());
       }
       buffer.erase(buffer.begin(), iter);
     }
