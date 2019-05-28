@@ -101,15 +101,18 @@ class VescPacketValues : public VescPacket
 public:
   VescPacketValues(boost::shared_ptr<VescFrame> raw);
 
-  double temp_mos() const;
-  double temp_motor() const;
+  double v_in() const;
+  double temp_mos1() const;
+  double temp_mos2() const;
+  double temp_mos3() const;
+  double temp_mos4() const;
+  double temp_mos5() const;
+  double temp_mos6() const;
+  double temp_pcb() const;
   double current_motor() const;
   double current_in() const;
-  double id() const;
-  double iq() const;
-  double duty_now() const;
   double rpm() const;
-  double v_in() const;
+  double duty_now() const;
   double amp_hours() const;
   double amp_hours_charged() const;
   double watt_hours() const;
