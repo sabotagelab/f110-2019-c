@@ -6,7 +6,11 @@
 
 	<!-- Always need this when playing back files-->
   	<param name="/use_sim_time" value="true"/>
+<<<<<<< HEAD
 	<param name="range_method" value="rmgpu"/>
+=======
+
+>>>>>>> 9d45db74af4fe9171b83917721919b8b9040b4ed
   	<node pkg="rosbag" type="play" name="play_rosbag" args="$(find localization)/bags/moore-loop.bag --clock --delay 5" output="screen"/>
   	
   	<!-- Run map server -->
