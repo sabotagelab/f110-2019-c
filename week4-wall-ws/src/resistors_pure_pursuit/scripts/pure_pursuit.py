@@ -153,6 +153,8 @@ def callback(data):
     curvature = (2*x_car2goal)/(closest_dis*closest_dis);
     angle = -curvature;
 
+    print()
+
 
 
 
