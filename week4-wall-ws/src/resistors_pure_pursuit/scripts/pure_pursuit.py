@@ -52,28 +52,48 @@ def callback(data):
     # 1. Determine the current location of the vehicle (we are subscribed to vesc/odom)
     # Hint: Read up on PoseStamped message type in ROS to determine how to extract x, y, and yaw.
     
-
-        
+	x_pos = data.pose.position.x
+        y_pos = data.pose.position.y
+        quaternion = (
+                data.pose.orientation.x,
+                data.pose.orientation.y,
+                data.pose.orientation.z,
+                data.pose.orientation.w)
+        euler = euler_from_quaternion(quaternion)
+        yaw = euler[2]       
 
     # 2. Find the path point closest to the vehicle that is >= 1 lookahead distance from vehicle's current location.
 
-
+	currentPoint = [x_pos, y_pos, yaw]
+	
+	minDistance = 10000
+	bestPoint = []
+	for point in path_points:
+		dist = dist(currentPoint, point)
+		if (dist < minDistance and dist >= LOOKAHEAD_DISTANCE):
+			minDistance = dist
+			bestPoint = point
 
     # 3. Transform the goal point to vehicle coordinates. 
-    
-    
+	# converting to car reference frame
+	new_x = bestPoint[0] - currentPoint[0]
+	new_y = bestPoint[1] - currentPoint[1]
+	new_yaw = tan(new_y / new_x)
 
+	target_point = [new_x, new_y, new_yaw]    
+   
     # 4. Calculate the curvature = 1/r = 2x/l^2
     # The curvature is transformed into steering wheel angle by the vehicle on board controller.
     # Hint: You may need to flip to negative because for the VESC a right steering angle has a negative value.
-
+	# curvature = 2|y|/(LD^2) according to lecture slides
+	curvature = (2 * abs(target_point[1])) / (LOOKAHEAD_DISTANCE * LOOKAHEAD_DISTANCE)	
     
-    angle = np.clip(angle, -0.4189, 0.4189) # 0.4189 radians = 24 degrees because car can only turn 24 degrees max
+    	angle = np.clip(curvature, -0.4189, 0.4189) # 0.4189 radians = 24 degrees because car can only turn 24 degrees max
 
-    msg = drive_param()
-    msg.velocity = VELOCITY
-    msg.angle = angle
-    pub.publish(msg)
+   	msg = drive_param()
+    	msg.velocity = VELOCITY
+    	msg.angle = angle
+    	pub.publish(msg)
     
 if __name__ == '__main__':
     rospy.init_node('pure_pursuit')
