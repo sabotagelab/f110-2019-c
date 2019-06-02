@@ -29,7 +29,8 @@ startup_flag = 1;       # Flag so that first time in callback, it searches ALL w
 # Import waypoints.csv into a list
 # path_points are [x, y, theta]
 dirname = os.path.dirname(__file__)
-filename = os.path.join(dirname, '../waypoints/levine-waypoints.csv')
+print("DIRNAME: " + str(dirname))
+filename = os.path.join(dirname, '/home/nvidia/f110-2019-c/week4-wall-ws/src/resistors_pure_pursuit/waypoints/waypoints_one_curve.csv')
 with open(filename) as f:
     path_points = [tuple(line) for line in csv.reader(f)]
 

@@ -7,7 +7,7 @@
   	</include>
   
   	<!-- Run map server -->
-	<arg name="map_file" default="/home/jesse/f110-2019-c/hallway_1.pgm.yaml"/>
+	<arg name="map_file" default="../maps/resistors.yaml"/>
 	<node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
 
 	<node pkg="resistors_pure_pursuit" name="remap_gazebo_pose_node" type="remap_gazebo_pose.py" output="screen" />

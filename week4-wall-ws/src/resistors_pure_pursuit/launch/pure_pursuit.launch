@@ -3,7 +3,7 @@
 	<include file="$(find racecar)/launch/teleop.launch"/>
   	
   	<!-- Run map server -->
-	<arg name="map_file" default="/home/jesse/f110-2019-c/hallway_1.pgm.yaml"/>
+	<arg name="map_file" default="/home/nvidia/f110-2019-c/week4-wall-ws/src/resistors_pure_pursuit/maps/resistors.yaml"/>
 	<node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
 
   	<node pkg="tf2_ros" type="static_transform_publisher" name="base_footprint_to_laser" args="0 0 0 0 0 0 			base_footprint laser" output="screen"/>
