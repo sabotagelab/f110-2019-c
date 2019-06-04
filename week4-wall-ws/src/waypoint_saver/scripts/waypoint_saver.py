@@ -27,7 +27,7 @@ def waypoint_callback(data):
 	data_list.append(yaw)
 	print(data_list)
 	
-	with open('waypoints.csv', 'a') as writeFile:
+	with open('/home/nvidia/waypoints.csv', 'a') as writeFile:
                 writer = csv.writer(writeFile)
 		writer.writerow(data_list)
 	writeFile.close()	
