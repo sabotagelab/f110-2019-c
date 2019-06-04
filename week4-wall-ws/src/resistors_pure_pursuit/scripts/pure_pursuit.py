@@ -11,14 +11,14 @@ from tf.transformations import euler_from_quaternion, quaternion_from_euler
 from visualization_msgs.msg import Marker
 import csv
 import os
-
+import sys
 
 #############
 # CONSTANTS #
 #############
 
-LOOKAHEAD_DISTANCE = 1.5 # meters
-VELOCITY = 0.5 # m/s
+LOOKAHEAD_DISTANCE = 1.8# meters
+VELOCITY = 1.5 # m/s
 
 ###########
 # GLOBALS #
@@ -28,19 +28,30 @@ global car_position, startup_flag
 car_position = [0,0]
 startup_flag = 1;       # Flag so that first time in callback, it searches ALL waypoints to find closest
 
+
+
+
+
 # Import waypoints.csv into a list
 # path_points are [x, y, theta]
 dirname = os.path.dirname(__file__)
 
-filename = os.path.join(dirname, '/home/nvidia/f110-2019-c/week4-wall-ws/src/resistors_pure_pursuit/waypoints/waypoints_one_curve.csv')
+filename = os.path.join(dirname, '/home/nvidia/f110-2019-c/week4-wall-ws/src/resistors_pure_pursuit/waypoints/kelley-3.csv')
 with open(filename) as f:
     path_points = [tuple(line) for line in csv.reader(f)]
 
+#print("PATH POINT 999: " + str(path_points[999]))
+#print("PATH POINT 1000: "  + str(path_points[1000]))
+#print("PATH POINT 1001: " + str(path_points[1001]))
 # Turn path_points into a list of floats to eliminate the need for casts in the code below.
 #path_points = [(float(point[0]+7.564), float(point[1]-9.147), float(point[2])) for point in path_points]
 path_points = [(float(point[0]), float(point[1]), float(point[2])) for point in path_points]
 #path_points = [path_points[0] +7.564, path_points[1]-9.147]
-        
+
+#print("FLOAT PATH POINT 999: " + str(path_points[999]))
+#print("FLOAT PATH POINT 1000: "  + str(path_points[1000]))
+#print("FLOAT PATH POINT 1001: " + str(path_points[1001]))        
+
 # Publisher for 'drive_parameters' (speed and steering angle)
 pub = rospy.Publisher('drive_parameters', drive_param, queue_size=1)
 
@@ -101,13 +112,15 @@ def callback(data):
 
     # If this is first time in callback, must search ALL waypoints to find closest
     if startup_flag == 1:
-        startup_flag = 0;
+        startup_flag = 1;
         num_path_points = len(path_points)   # How many waypoints are there to search?
         shortest_dis = 50000;       # Arbitrarily Large
         closest_index = num_path_points +10;   # Artibtrarily Large
         for i in range(0,num_path_points):
             dist_temp = dist(car_position,[path_points[i][0], path_points[i][1]])   # Find Car to Waypoint Distance
             if dist_temp < shortest_dis:
+		print("DIST TEMP: " + str(dist_temp))
+		print("SHORTEST DIST:  " + str(shortest_dis))
                 # If you found a new shortest waypoint distance
                 shortest_dis = dist_temp;
                 closest_index = i;
@@ -180,10 +193,10 @@ def callback(data):
 
 
     # ERROR IN MANUAL: They mix up beta and gamma. I swapped the two in these equations.
-    gamma = np.arctan(num/den);
-    beta = (np.pi)/2 - yaw - gamma;
-    x_car2goal = closest_dis*np.cos(beta)
-    y_car2goal = closest_dis*np.sin(beta)
+    gamma = math.atan2(den,num)
+    beta = (np.pi)/2 - yaw - gamma
+    x_car2goal = closest_dis*np.sin(beta)
+    y_car2goal = closest_dis*np.cos(beta)
     #x_car2goal = 10
     #y_car2goal = 0
 
@@ -191,7 +204,7 @@ def callback(data):
     print('Ready to Publish Car Goal')
     #temp = raw_input()
     marker_goal = Marker()
-    marker_goal = make_marker(marker_goal, [x_car2goal, y_car2goal]);
+    marker_goal = make_marker(marker_goal, [y_car2goal, x_car2goal]);
     marker_goal.type = marker_goal.CUBE
     marker_goal.color.b = 1.0
     marker_goal.header.frame_id = "/laser"
@@ -219,7 +232,7 @@ def callback(data):
 
     #### Yaw of Car (Yaw) ##########
     marker_yaw = Marker()
-    marker_yaw_location = [1, 3]
+    marker_yaw_location = [-51, -53]
     marker_yaw = make_marker(marker_yaw, marker_yaw_location);
     marker_yaw.type = marker_yaw.TEXT_VIEW_FACING
     marker_yaw.text = 'Car Yaw: ' + str(np.round(yaw_deg, decimals = 2))
@@ -227,7 +240,7 @@ def callback(data):
 
     #### Drive Command (Theta) #####
     marker_angle = Marker()
-    marker_angle_location = [1, 3.5]
+    marker_angle_location = [-51, -53.5]
     marker_angle = make_marker(marker_angle, marker_angle_location);
     marker_angle.type = marker_angle.TEXT_VIEW_FACING
     marker_angle.text = 'Drive Cmd (Angle): ' + str(np.round(angle_deg, decimals = 4))
@@ -235,7 +248,7 @@ def callback(data):
 
     #### Map Origin to Goal Point (Gamma) #####
     marker_gamma = Marker()
-    marker_gamma_location = [1, 4]
+    marker_gamma_location = [-51, -54]
     marker_gamma = make_marker(marker_gamma, marker_gamma_location);
     marker_gamma.type = marker_angle.TEXT_VIEW_FACING
     marker_gamma.text = 'Map to Goal (Gamma): ' + str(np.round(gamma_deg, decimals = 4))
@@ -243,7 +256,7 @@ def callback(data):
 
     #### Car Origin to Goal Point (Beta) #####
     marker_beta = Marker()
-    marker_beta_location = [1, 4.5]
+    marker_beta_location = [-51, -54.5]
     marker_beta = make_marker(marker_beta, marker_beta_location);
     marker_beta.type = marker_beta.TEXT_VIEW_FACING
     marker_beta.text = 'Car to Goal (Beta): ' + str(np.round(beta_deg, decimals = 4))

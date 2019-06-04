@@ -11,9 +11,12 @@ import csv
 import pdb
 
 dirname = os.path.dirname(__file__)
-filename = os.path.join(dirname, '../waypoints/waypoints_one_curve.csv')
+filename = os.path.join(dirname, '../waypoints/kelley-3.csv')
 with open(filename) as f:
 	path_points = [tuple(line) for line in csv.reader(f)]
+
+#	path_points = path_points[1000:1180]
+
 
 topic = 'visualization_marker_array'
 publisher = rospy.Publisher(topic, MarkerArray, queue_size="1")
